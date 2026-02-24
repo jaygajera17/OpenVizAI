@@ -19,4 +19,4 @@ npm run bootstrap
 npm run dev:server
 ```
 
-3. Create a frontend in `apps/web` (Vite or CRA recommended).
+3. Create a frontend in `apps/web` (Vite or CRA recommended)..
