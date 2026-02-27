@@ -15,7 +15,9 @@ const EmbeddingFieldTypeSchema = EmbeddingFieldSchema.extend({
 });
 
 
-// Chart-agnostic embedding with predefined keys (arrays may be empty)
+// Chart-agnostic embedding with predefined keys (arrays may be empty).
+// This is intentionally generic so a single schema can represent
+// line, bar/column, rangeBar, and combo charts in a library-agnostic way.
 const EmbeddingSchema = z.object({
   x: z.array(EmbeddingFieldSchema),
   y: z.array(EmbeddingFieldTypeSchema),
@@ -53,15 +55,22 @@ const EmbeddingSchema = z.object({
     ),
 });
 
-export const responseFormatterSchema =  z.object({
-  response_type: z.string(),
+export const responseFormatterSchema = z.object({
+  response_type: z.literal("graphical"),
   meta: z.object({
     title: z.string(),
     subtitle: z.string().nullable(),
     query_explanation: z.string(),
   }),
   chart: z.object({
-  chart_type: z.string(),
-  embedding: EmbeddingSchema,
-})
+    chart_type: z.enum(['line', 'bar', 'range_bar', 'pie', 'donut']),
+    embedding: EmbeddingSchema,
+  }),
 });
+
+// Lightweight schema for the chart selection / identification step
+export const chartIdentifierSchema = z.object({
+  chart_type: z.enum(['line', 'bar', 'range_bar', 'pie', 'donut']),
+  reason: z.string(),
+});
+
