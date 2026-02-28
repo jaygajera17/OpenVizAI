@@ -10,7 +10,7 @@ import { responseFormatterSchema } from "../config/zodSchema";
 import ChatHistoryService from "@services/chatHistory.service";
 import customErrorHandler from "@utils/customErrorHandler";
 import { Pool } from "pg";
-
+import { createResponseFormatterSchema } from "../config/createSchema";
 /**
  * This helper function transforms query results into a tabular format suitable
  * for display. All values are converted to strings to avoid type unions in the
@@ -66,6 +66,7 @@ export const responseFormatterNode = async (state: any) => {
     const data = state.data;
     const chartType = state.chartType as string;
     const sessionId = state.sessionId;
+    const schema = createResponseFormatterSchema(chartType);
 
     const sampleData = prepareSampleData(data);
 
@@ -80,7 +81,7 @@ export const responseFormatterNode = async (state: any) => {
     const messages = [systemMessage, humanMessage];
 
     const response = await model
-      .withStructuredOutput(responseFormatterSchema)
+      .withStructuredOutput(schema)
       .invoke(messages);
 
     const aiMessage = new AIMessage({
