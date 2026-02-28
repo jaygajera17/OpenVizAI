@@ -7,6 +7,8 @@ import TokenService from "@services/auth/token.service";
 import { IAuthUser } from "@interfaces/user";
 
 class AuthController {
+
+
   public async loginWithEmail(
     req: Request,
     res: Response,
@@ -29,7 +31,7 @@ class AuthController {
     }
   }
 
-    /**
+  /**
    * Refresh token
    */
   public async refreshToken(req: Request, res: Response, next: NextFunction) {

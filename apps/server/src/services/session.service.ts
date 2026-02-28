@@ -1,11 +1,9 @@
-import customErrorHandler from '@utils/customErrorHandler';
-import { HTTP_STATUS_CODE } from '@utils/httpStatusCodes';
-import { v4 as uuidv4 } from 'uuid';
-import { IAllSessionQueryParams } from '@interfaces/ai';
-import { Prisma } from '../../../../generated/prisma/client';
-import { prisma } from '@db';
-import { UpdateSessionData } from './types';
-
+import customErrorHandler from "@utils/customErrorHandler";
+import { HTTP_STATUS_CODE } from "@utils/httpStatusCodes";
+import { v4 as uuidv4 } from "uuid";
+import { IAllSessionQueryParams } from "@interfaces/ai";
+import { prisma } from "@db";
+import { UpdateSessionData } from "./types";
 
 export default class SessionService {
   /**
@@ -15,24 +13,21 @@ export default class SessionService {
    */
   static async getAllSessions(
     userId: string,
-    queryParams: IAllSessionQueryParams,
   ) {
     try {
-
-    
       const sessions = await prisma.userSession.findMany({
         where: {
-           user_id:userId
-        }
+          user_id: userId,
+        },
       });
 
       return {
-        sessions
+        sessions,
       };
     } catch (error) {
       throw new customErrorHandler(
         HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
-        'Failed to get all sessions',
+        "Failed to get all sessions",
       );
     }
   }
@@ -49,7 +44,7 @@ export default class SessionService {
     title: string,
   ) {
     try {
-      console.log(userId,sessionId)
+      console.log(userId, sessionId);
       const session = await prisma.userSession.findUnique({
         where: { session_id: sessionId },
       });
@@ -58,16 +53,16 @@ export default class SessionService {
           data: {
             session_id: sessionId,
             user_id: userId,
-            title: title | 'new session'
+            title: title ? title : "New Session",
           },
         });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
 
       throw new customErrorHandler(
         HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
-        'Failed to ensure session exists',
+        "Failed to ensure session exists",
       );
     }
   }
@@ -115,7 +110,7 @@ export default class SessionService {
     } catch (error) {
       throw new customErrorHandler(
         HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
-        'Failed to update session',
+        "Failed to update session",
       );
     }
   }
@@ -124,36 +119,34 @@ export default class SessionService {
    * Deletes a session with the given session ID
    * @param sessionId The ID of the session to delete
    */
-  static async deleteSession(sessionId: string) {
-    try {
-      await prisma.$transaction(async (tx) => {
-        await tx.userSession.delete({
-          where: { session_id: sessionId },
-        });
+  // static async deleteSession(sessionId: string) {
+  //   try {
+  //     await prisma.$transaction(async (tx) => {
+  //       await tx.userSession.delete({
+  //         where: { session_id: sessionId },
+  //       });
 
-        await tx.chatHistory.deleteMany({
-          where: { session_id: sessionId },
-        });
+  //       await tx.chatHistory.deleteMany({
+  //         where: { session_id: sessionId },
+  //       });
 
-        await tx.checkpointBlob.deleteMany({
-          where: { thread_id: sessionId },
-        });
+  //       await tx.checkpointBlob.deleteMany({
+  //         where: { thread_id: sessionId },
+  //       });
 
-        await tx.checkpoint.deleteMany({
-          where: { thread_id: sessionId },
-        });
+  //       await tx.checkpoint.deleteMany({
+  //         where: { thread_id: sessionId },
+  //       });
 
-        await tx.checkpointWrite.deleteMany({
-          where: { thread_id: sessionId },
-        });
-      });
-    } catch (error) {
-      throw new customErrorHandler(
-        HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
-        'Failed to delete session',
-      );
-    }
-  }
-
-
+  //       await tx.checkpointWrite.deleteMany({
+  //         where: { thread_id: sessionId },
+  //       });
+  //     });
+  //   } catch (error) {
+  //     throw new customErrorHandler(
+  //       HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+  //       "Failed to delete session",
+  //     );
+  //   }
+  // }
 }

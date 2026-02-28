@@ -19,8 +19,8 @@ const EmbeddingFieldTypeSchema = EmbeddingFieldSchema.extend({
 // This is intentionally generic so a single schema can represent
 // line, bar/column, rangeBar, and combo charts in a library-agnostic way.
 const EmbeddingSchema = z.object({
-  x: z.array(EmbeddingFieldSchema),
-  y: z.array(EmbeddingFieldTypeSchema),
+  x: z.array(EmbeddingFieldSchema).nullable(),
+  y: z.array(EmbeddingFieldTypeSchema).nullable(),
   group: z.array(EmbeddingFieldSchema).nullable(),
   category: z.array(EmbeddingFieldSchema).nullable(),
   value: z.array(EmbeddingFieldSchema).nullable(),

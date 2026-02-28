@@ -14,7 +14,7 @@ class AIRouter {
 
     this.router.get('/sessions/:sessionId',aiController.getSessionMessages);
 
-    this.router.get('/sessions',sessionController.createNewSession)
+    this.router.get('/sessions',sessionController.getAllSessions)
 
   }
 

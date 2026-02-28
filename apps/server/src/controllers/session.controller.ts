@@ -58,20 +58,20 @@ class SessionController {
     }
   }
 
-  public async deleteSession(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { sessionId } = req.params;
-      await SessionService.deleteSession(sessionId);
-      return successResponse(
-        res,
-        HTTP_STATUS_CODE.OK,
-        'Success',
-        'Session deleted successfully',
-      );
-    } catch (error) {
-      next(error);
-    }
-  }
+  // public async deleteSession(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const { sessionId } = req.params;
+  //     await SessionService.deleteSession(sessionId);
+  //     return successResponse(
+  //       res,
+  //       HTTP_STATUS_CODE.OK,
+  //       'Success',
+  //       'Session deleted successfully',
+  //     );
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
   
 }
 

@@ -39,8 +39,12 @@ You MUST set chart.chart_type to exactly one of: "line", "bar", "range_bar", "pi
   - Any aggregation to coarser intervals (day → week → month) must already have been done in SQL (you must not re-aggregate).
 - pie / donut:
   - Use ONLY when there are very few categories (2–5 slices) that form a single whole.
-  - Do not use multiple pies to compare categories; use grouped/stacked bars instead.
-  - Do not introduce an "Other" category unless it already exists in dataSample.
+  - MUST contain:
+      - Exactly one categorical field in embedding.category (array with one field).
+      - Exactly one numeric field in embedding.value (array with one field).
+  - embedding.x and embedding.y MUST be empty arrays.
+  - Do NOT leave value empty.
+  - Do NOT place pie fields inside embedding.x or embedding.y.
 - rangeBar:
   - For min–max ranges when start and end fields exist (e.g., duration windows). Use is_horizontal = true.
 - combo / mixed:
