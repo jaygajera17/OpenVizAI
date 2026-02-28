@@ -12,7 +12,7 @@ import logger from "@logger/index";
 class AIController {
   public async generateAnswer(req: Request, res: Response, next: NextFunction) {
     try {
-      const { prompt, data, sessionId, userPrompt } = req.body;
+      const { prompt, data, sessionId } = req.body;
       const userId = req.user?.id;
 
       const pgPool = new Pool({
@@ -30,6 +30,8 @@ class AIController {
       const result = await graph.invoke({
         userPrompt: prompt,
         data: data,
+      }, {
+        configurable: {thread_id: sessionId}
       });
 
       return successResponse(res, HTTP_STATUS_CODE.OK, "embedding generated", {

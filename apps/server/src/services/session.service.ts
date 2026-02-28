@@ -45,10 +45,11 @@ export default class SessionService {
    */
   static async ensureSessionExists(
     sessionId: string,
-    employeeId: string,
+    userId: string,
     title: string,
   ) {
     try {
+      console.log(userId,sessionId)
       const session = await prisma.userSession.findUnique({
         where: { session_id: sessionId },
       });
@@ -56,12 +57,14 @@ export default class SessionService {
         await prisma.userSession.create({
           data: {
             session_id: sessionId,
-            user_id: employeeId,
-            title: title,
+            user_id: userId,
+            title: title | 'new session'
           },
         });
       }
     } catch (error) {
+      console.log(error)
+
       throw new customErrorHandler(
         HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
         'Failed to ensure session exists',

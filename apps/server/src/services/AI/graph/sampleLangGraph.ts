@@ -49,6 +49,7 @@ export const createSampleLangGraph = async (
   const graph = workflow.compile({
     checkpointer: checkPointer,
   });
+  await checkPointer.setup();
 
   return graph;
 };

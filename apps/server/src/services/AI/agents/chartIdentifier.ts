@@ -12,6 +12,7 @@ import ChatHistoryService from "@services/chatHistory.service";
 import { Pool } from "pg";
 import { formatData } from "./responseFormatter";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+import { initChatModel } from "langchain";
 
 const prepareSampleData = (data: any) => {
   if (!data) {
@@ -57,9 +58,10 @@ export const chartIdentifierNode = async (state: any) => {
 
     const contextMessages = [
       systemMessage,
-      ...chartIdentifierAgent,
+      //chartIdentifierAgent,
       userMessage,
     ];
+
 
     // const response = await model
     //   .withStructuredOutput(chartIdentifierSchema)
@@ -69,10 +71,13 @@ export const chartIdentifierNode = async (state: any) => {
       apiKey: OPENAI_API_KEY,
       model: "gpt-4.1-nano-2025-04-14",
     });
+    
+    console.log(contextMessages)
 
-    const response = await model
-      .withStructuredOutput(chartIdentifierSchema)
-      .invoke(contextMessages) as any;
+    const modelWithStructure = model.withStructuredOutput(chartIdentifierSchema)
+    const response = await modelWithStructure.invoke(contextMessages)
+
+      console.log(response);
 
     const aiMessage = new AIMessage(
       `Based on the user's prompt and the provided data, I've identified the most suitable chart type as '${response.chart_type}'.`,
@@ -86,7 +91,7 @@ export const chartIdentifierNode = async (state: any) => {
       chartIdentifierAgent: [userMessage, aiMessage],
     };
   } catch (err) {
-    console.error("Error in chartIdentifierNode:", err);
+    // console.error("Error in chartIdentifierNode:", err);
     throw err;
   }
 };

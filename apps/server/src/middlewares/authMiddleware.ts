@@ -27,7 +27,7 @@ const authMiddleware = async (
         );
       }
 
-      // Verify JWT token (works regardless of login method)
+      // Verify JWT token
       const decodedAccessToken = jwt.verify(accessToken, JWT_SECRET, {
         algorithms: ["HS256"],
       }) as unknown as IJwtPayload;
@@ -45,6 +45,7 @@ const authMiddleware = async (
           "Unauthorized.",
         );
       }
+      console.log(user);
 
       // Attach user object to the request for further processing
       req.user = user;
