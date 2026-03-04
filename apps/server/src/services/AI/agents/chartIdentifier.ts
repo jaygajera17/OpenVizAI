@@ -12,7 +12,6 @@ import ChatHistoryService from "@services/chatHistory.service";
 import { Pool } from "pg";
 import { formatData } from "./responseFormatter";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
-import { initChatModel } from "langchain";
 
 const prepareSampleData = (data: any) => {
   if (!data) {
@@ -24,17 +23,21 @@ const prepareSampleData = (data: any) => {
 
 export const chartIdentifierNode = async (state: any) => {
   try {
-    const { sessionId, userPrompt, userId, chartIdentifierAgent } = state;
+    const { sessionId, userPrompt, userId } = state;
 
     const pgPool = new Pool({
       connectionString: DATABASE_URL,
     });
-    const postgresSaver = new PostgresSaver(pgPool);
 
     await SessionService.ensureSessionExists(sessionId, userId, userPrompt);
 
     // Create user message
-    const userMessage = new HumanMessage(userPrompt);
+    const userMessage = new HumanMessage({
+      content: userPrompt,
+      additional_kwargs: {
+        data: state.data,
+      },
+    });
 
     // Store user message in chat history
     await ChatHistoryService.addChatHistory(sessionId, userMessage, pgPool);
@@ -52,6 +55,7 @@ export const chartIdentifierNode = async (state: any) => {
 
     const sampleData = prepareSampleData(data);
 
+    console.log(sampleData);
     const systemMessage = new SystemMessage(
       chartIdentifierPrompt(userPrompt, sampleData),
     );
@@ -62,7 +66,6 @@ export const chartIdentifierNode = async (state: any) => {
       userMessage,
     ];
 
-
     // const response = await model
     //   .withStructuredOutput(chartIdentifierSchema)
     //   .invoke(contextMessages);
@@ -71,13 +74,12 @@ export const chartIdentifierNode = async (state: any) => {
       apiKey: OPENAI_API_KEY,
       model: "gpt-4.1-nano-2025-04-14",
     });
-    
-    console.log(contextMessages)
 
-    const modelWithStructure = model.withStructuredOutput(chartIdentifierSchema)
-    const response = await modelWithStructure.invoke(contextMessages)
-
-      console.log(response);
+    const modelWithStructure = model.withStructuredOutput(
+      chartIdentifierSchema,
+    );
+    const response = await modelWithStructure.invoke(contextMessages);
+    console.log(response);
 
     const aiMessage = new AIMessage(
       `Based on the user's prompt and the provided data, I've identified the most suitable chart type as '${response.chart_type}'.`,
@@ -91,7 +93,7 @@ export const chartIdentifierNode = async (state: any) => {
       chartIdentifierAgent: [userMessage, aiMessage],
     };
   } catch (err) {
-    // console.error("Error in chartIdentifierNode:", err);
+    console.error("Error in chartIdentifierNode:", err);
     throw err;
   }
 };

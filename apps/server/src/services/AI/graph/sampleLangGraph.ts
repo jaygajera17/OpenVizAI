@@ -23,7 +23,10 @@ export const createSampleLangGraph = async (
       value: (x, y) => y,
       default: () => userId,
     }),
-    data: Annotation<any>(),
+    data: Annotation<any>({
+      value: (x, y) => y,
+      default: () => data,
+    }),
     userPrompt: Annotation<string>({
       value: (x, y) => y,
       default: () => userPrompt,

@@ -5,7 +5,6 @@ import { DATABASE_URL } from '@config/secrets';
 
 const connectionString = `${DATABASE_URL}`;
 
-console.log(connectionString)
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 

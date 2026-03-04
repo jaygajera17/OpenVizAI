@@ -1,13 +1,15 @@
 import Chart from "react-apexcharts";
 import type { BarChartVariant } from "../config/barChartExamples";
+import { useChartState } from "../context/chartContext";
 
 type BarChartProps = {
   variant: BarChartVariant;
 };
 
 export default function BarChart({ variant }: BarChartProps) {
-  const { result, rows } = variant;
+  const { result } = variant;
   const { embedding } = result.chart;
+  const { rows } = useChartState();
 
   const apexType =
     result.chart.chart_type === "range_bar" || embedding.is_range
@@ -123,7 +125,8 @@ export default function BarChart({ variant }: BarChartProps) {
     },
     xaxis: {
       type:
-        embedding.start?.unit === "datetime" || embedding.end?.unit === "datetime"
+        embedding.start?.unit === "datetime" ||
+        embedding.end?.unit === "datetime"
           ? ("datetime" as const)
           : ("category" as const),
     },
@@ -147,4 +150,3 @@ export default function BarChart({ variant }: BarChartProps) {
     />
   );
 }
-

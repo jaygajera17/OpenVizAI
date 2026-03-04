@@ -1,16 +1,19 @@
 import Chart from "react-apexcharts";
 import type { PieChartVariant } from "../config/pieChartExamples";
+import { useChartState } from "../context/chartContext";
 
 type PieChartProps = {
   variant: PieChartVariant;
 };
 
 export default function PieChart({ variant }: PieChartProps) {
-  const { result, rows } = variant;
+  const { result } = variant;
   const { embedding } = result.chart;
+  const { rows } = useChartState();
+  
 
-  const categoryField = embedding.category;
-  const valueField = embedding.value;
+  const categoryField = embedding.category?.[0]?.field;
+const valueField = embedding.value?.[0]?.field;
 
   const labels = rows.map((row) => String(row[categoryField] ?? ""));
   const series = rows.map((row) => {

@@ -1,3 +1,4 @@
+import type { SessionMessageResponse } from "../../types/chat";
 import { APIService } from "../apiService";
 
 export type Session = {
@@ -7,6 +8,8 @@ export type Session = {
   created_ts: string;
   updated_ts: string;
 };
+
+
 
 export type SessionsListResponse = Session[];
 
@@ -34,6 +37,6 @@ export const updateSession = (
 // };
 
 // retrieve chat history for a session
-export const getSessionMessages = (sessionId: string): Promise<unknown> => {
+export const getSessionMessages = (sessionId: string): Promise<SessionMessageResponse> => {
   return APIService.get(`/api/ai/sessions/${sessionId}`);
 };

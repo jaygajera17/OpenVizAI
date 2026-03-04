@@ -45,7 +45,6 @@ const authMiddleware = async (
           "Unauthorized.",
         );
       }
-      console.log(user);
 
       // Attach user object to the request for further processing
       req.user = user;

@@ -96,6 +96,6 @@ export const responseFormatterNode = async (state: any) => {
     return { ...state, result: response };
   } catch (err) {
     console.error("Error in responseFormatterNode:", err);
-    throw new customErrorHandler(400,err);
+    throw new customErrorHandler(400,`${err}`);
   }
 };

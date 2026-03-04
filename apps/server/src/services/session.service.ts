@@ -15,15 +15,13 @@ export default class SessionService {
     userId: string,
   ) {
     try {
-      const sessions = await prisma.userSession.findMany({
+      return  await prisma.userSession.findMany({
         where: {
           user_id: userId,
         },
       });
 
-      return {
-        sessions,
-      };
+    
     } catch (error) {
       throw new customErrorHandler(
         HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -44,7 +42,6 @@ export default class SessionService {
     title: string,
   ) {
     try {
-      console.log(userId, sessionId);
       const session = await prisma.userSession.findUnique({
         where: { session_id: sessionId },
       });
@@ -58,7 +55,6 @@ export default class SessionService {
         });
       }
     } catch (error) {
-      console.log(error);
 
       throw new customErrorHandler(
         HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,

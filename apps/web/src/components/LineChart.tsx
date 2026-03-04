@@ -1,12 +1,14 @@
 import Chart from "react-apexcharts";
 import type { LineChartVariant } from "../config/lineChartExamples";
+import { useChartState } from "../context/chartContext";
 
 type LineChartProps = {
   variant: LineChartVariant;
 };
 
 export default function LineChart({ variant }: LineChartProps) {
-  const { result, rows } = variant;
+  const { result } = variant;
+  const { rows } = useChartState();
 
   if (result.chart.chart_type !== "line") {
     // For safety: this component only handles line charts
