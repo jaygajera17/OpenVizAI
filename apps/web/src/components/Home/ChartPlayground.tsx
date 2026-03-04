@@ -52,11 +52,9 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
   };
 
   return (
-    <main className="col-md-9">
+    <main className="col-lg-10">
       <div className="card mb-4">
-        <div className="card-header bg-success text-white">
-          <h5 className="mb-0">Generate Chart</h5>
-        </div>
+      
 
         <div className="card-body">
           <form onSubmit={handleSubmit}>
@@ -64,7 +62,7 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
               <label className="form-label">Prompt</label>
               <textarea
                 className="form-control"
-                rows={3}
+                rows={1}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
               />
@@ -74,7 +72,7 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
               <label className="form-label">Data (JSON)</label>
               <textarea
                 className="form-control font-monospace"
-                rows={6}
+                rows={4}
                 value={dataInput}
                 onChange={(e) => setDataInput(e.target.value)}
               />
@@ -86,7 +84,7 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
 
             <button
               type="submit"
-              className="btn btn-primary w-100"
+              className="btn btn-primary w-100 fw-semibold"
               disabled={loading}
             >
               {loading ? "Generating..." : "Generate Chart"}
@@ -97,9 +95,9 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
 
       {chartResult && (
         <div className="card">
-          <div className="card-header bg-info text-white">
-            <h5 className="mb-0">{chartResult.meta.title}</h5>
-            <small>{chartResult.meta.query_explanation}</small>
+          <div className="card-header bg-info text-white d-flex flex-column">
+            <h5 className="mb-1">{chartResult.meta.title}</h5>
+            <small className="opacity-75">{chartResult.meta.query_explanation}</small>
           </div>
 
           <div className="card-body">

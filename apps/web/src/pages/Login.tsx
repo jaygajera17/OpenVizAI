@@ -28,34 +28,41 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto", padding: 16 }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 8 }}>
-          <label htmlFor="email">Email:</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: 8 }}
-          />
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div className="card shadow-sm" style={{ width: "380px" }}>
+        <div className="card-body">
+          <h4 className="card-title mb-3">Login</h4>
+
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Email</label>
+              <input
+                type="email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
+              disabled={(loginMutation.status as any) === "pending"}
+            >
+              {(loginMutation.status as any) === "pending"
+                ? "Logging in..."
+                : "Login"}
+            </button>
+
+            {loginMutation.isError && (
+              <div className="alert alert-danger mt-3">
+                {(loginMutation.error as Error)?.message || "Login failed"}
+              </div>
+            )}
+          </form>
         </div>
-        <button
-          type="submit"
-          disabled={(loginMutation.status as any) === "pending"}
-        >
-          {(loginMutation.status as any) === "pending"
-            ? "Logging in..."
-            : "Login"}
-        </button>
-        {loginMutation.isError && (
-          <p style={{ color: "red" }}>
-            {(loginMutation.error as Error)?.message || "Login failed"}
-          </p>
-        )}
-      </form>
+      </div>
     </div>
   );
 }

@@ -50,3 +50,28 @@ button.btn:disabled {
   border-left-color: #0d6efd;
   background-color: #f8f9fa;
 }
+
+/* Sidebar improvements */
+.list-group-item.active {
+  background-color: #9dbceb;
+  border-color: #5b93e6;
+}
+
+.list-group-item:hover {
+  background-color: #f1f5ff;
+}
+
+/* Better card appearance */
+.card {
+  border-radius: 10px;
+}
+
+/* Navbar spacing */
+.navbar {
+  padding: 0.6rem 1.2rem;
+}
+
+/* Chart container */
+.card-body {
+  padding: 1.5rem;
+}

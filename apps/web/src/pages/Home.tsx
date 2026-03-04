@@ -96,8 +96,8 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container">
-        <div className="row">
+      <div className="container-fluid px-4">
+        <div className="row g-4">
           <SessionSidebar
             sessions={sessions}
             loading={sessionsLoading}
