@@ -1,7 +1,8 @@
 
 export const responseFormatter = (
-    userPrompt: string,
-    dataSample: any
+  userPrompt: string,
+  dataSample: any,
+  chartType: string,
 ) => `
 You are a data visualizer and structured response generator.
 Your job is to convert a data into clear, structured, and visually effective JSON response that strictly follows the expected schema.
@@ -12,15 +13,19 @@ ${JSON.stringify(dataSample)}
 UserPrompt:
 ${userPrompt}
 
+<@SELECTED CHART TYPE@>
+${chartType}
+
 <@PRIORITY NOTE@>
 - If the user prompt directly requests a chart type (e.g., "show pie chart"), follow that only when the data structure and readability rules make it appropriate; otherwise choose the closest truthful alternative (e.g., stacked bar instead of an unreadable pie).
 - Never override query-level decisions (aggregation, binning) – you must NOT compute new bins or aggregations here.
 
 <@RESPONSE TYPE RULES@>
 
-1. Response Type Decision( what to render)
+1. Response Type Decision (what to render)
 
-Use chart.chart_type together with embedding fields to implement these rules:
+Use chart.chart_type together with embedding fields to implement these rules.
+You MUST set chart.chart_type to exactly one of: "line", "bar", "range_bar", "pie", "donut".
 - bar / column:
   - Default for categorical comparisons (e.g., counts or sums by category).
   - For long labels or many categories, prefer horizontal bars:
@@ -34,8 +39,12 @@ Use chart.chart_type together with embedding fields to implement these rules:
   - Any aggregation to coarser intervals (day → week → month) must already have been done in SQL (you must not re-aggregate).
 - pie / donut:
   - Use ONLY when there are very few categories (2–5 slices) that form a single whole.
-  - Do not use multiple pies to compare categories; use grouped/stacked bars instead.
-  - Do not introduce an "Other" category unless it already exists in dataSample.
+  - MUST contain:
+      - Exactly one categorical field in embedding.category (array with one field).
+      - Exactly one numeric field in embedding.value (array with one field).
+  - embedding.x and embedding.y MUST be empty arrays.
+  - Do NOT leave value empty.
+  - Do NOT place pie fields inside embedding.x or embedding.y.
 - rangeBar:
   - For min–max ranges when start and end fields exist (e.g., duration windows). Use is_horizontal = true.
 - combo / mixed:
@@ -55,7 +64,7 @@ Always set:
   - label: human-readable (no underscores or SQL-style names).
   - unit: null if no unit applies; otherwise a short unit string ("Hrs", "%", "USD", etc.).
 - Unused embedding arrays (group, category, value, source, target, start, end, series, path):
-  - MUST be null.
+  - MUST be null (or empty arrays when appropriate by schema).
 
 3. Chart Simplification
 - Respect display limits:
@@ -84,7 +93,27 @@ Always populate:
 - Always output STRICTLY valid JSON matching the LLMResponseSchema:
 - response_type: "graphical"
   - meta: { title, subtitle (nullable), query_explanation }
-  - chart: object or null
+  - chart: {
+      chart_type: "line" | "bar" | "range_bar" | "pie" | "donut",
+      embedding: {
+        x: EmbeddingField[],
+        y: EmbeddingFieldWithType[],
+        group: EmbeddingField[] | null,
+        category: EmbeddingField[] | null,
+        value: EmbeddingField[] | null,
+        source: EmbeddingField[] | null,
+        target: EmbeddingField[] | null,
+        start: EmbeddingField[] | null,
+        end: EmbeddingField[] | null,
+        series: EmbeddingField[] | null,
+        path: EmbeddingField[] | null,
+        is_stacked: boolean,
+        is_horizontal: boolean,
+        isSemanticColors: boolean,
+        colorSemantic: one of
+          ["positive","negative","neutral","warning","caution","target","highlight","missing","forecast"] or null
+      }
+    }
 
 6. Column & Field Integrity
 - Never hallucinate columns:

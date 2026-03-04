@@ -16,6 +16,7 @@ import {
 } from '@utils/index';
 import { ErrorHandler } from '@middlewares/index';
 import allRoutes from '@routes/index';
+import authMiddleware from '@middlewares/authMiddleware';
 
 class Server {
   public app: Express;
@@ -68,7 +69,15 @@ class Server {
     });
 
     allRoutes.forEach((route) => {
-      this.app.use('/api' + route.path, route.router);
+      if (route.path !== '/auth') {
+        this.app.use(
+          '/api' + route.path,
+          authMiddleware,
+          route.router,
+        );
+      } else {
+        this.app.use('/api' + route.path, route.router);
+      }
     });
 
     this.app.all('*', (req: Request) => {
