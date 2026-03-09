@@ -9,13 +9,13 @@
 
 6) Frontend: Upload CSV/JSON file option, JSON editor.
 7) Frontend: Sample example to try on in demo playground.
-8) Frontend: Provide option to copy chart URL embedding
+8) Frontend: Provide option to copy chart URL embedding.
 
 9) Frontend: Adapter layer (Apex/ChartJs/ECharts) Design pattern.
 
 10) Frontend: chart theming , custom/AI generated 
 
-11) Packaging the project
+11) Packaging the project (done)
     11.1)  apps->playground for demo dashboard
     11.2)  viz Engine API package - for Backend
     11.3)  viz engine renderer package - for frontend

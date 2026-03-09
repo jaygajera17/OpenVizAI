@@ -1,27 +1,5 @@
 import { toCategoryString, toFiniteNumber, toMilliseconds } from "./chartData";
 
-/*
-Usage examples:
-
-Bar/Column:
-const categories = buildCategorySeriesLabels(rows, "month");
-const series = buildNumericSeries(rows, [
-  { field: "revenue", label: "Revenue" },
-  { field: "expenses", label: "Expenses" },
-]);
-
-Line (datetime):
-const points = buildDatetimePoints(rows, "date", "signups");
-const lineSeries = [{ name: "Signups", data: points }];
-
-Pie/Donut:
-const labels = buildCategorySeriesLabels(rows, "department");
-const values = buildSingleValueSeries(rows, "spend");
-
-Range Bar:
-const rangeData = buildRangeBarPoints(rows, "project", "start", "end");
-*/
-
 type Row = Record<string, unknown>;
 
 type YFieldLike = {

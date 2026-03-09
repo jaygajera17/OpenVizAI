@@ -1,21 +1,12 @@
 import Chart from "react-apexcharts";
-import type { PieChartVariant } from "../config/pieChartExamples";
-import { useChartState } from "../context/chartContext";
-import { buildApexBaseOptions } from "../utils/apexBaseOptions";
+import type { ChartComponentProps } from "./types";
+import { buildApexBaseOptions } from "../embedding/apexBaseOptions";
 import {
   buildCategorySeriesLabels,
   buildSingleValueSeries,
-} from "../utils/seriesBuilder";
+} from "../embedding/seriesBuilder";
 
-type PieChartProps = {
-  variant: PieChartVariant;
-};
-
-export default function PieChart({ variant }: PieChartProps) {
-  const { result } = variant;
-  const { embedding } = result.chart;
-  const { rows } = useChartState();
-
+export default function PieChart({ data, chartType, embedding, meta, config }: ChartComponentProps) {
   const categoryField = embedding.category?.[0]?.field;
   const valueField = embedding.value?.[0]?.field;
 
@@ -23,20 +14,21 @@ export default function PieChart({ variant }: PieChartProps) {
     return null;
   }
 
-  const labels = buildCategorySeriesLabels(rows, categoryField);
-  const series = buildSingleValueSeries(rows, valueField);
+  const labels = buildCategorySeriesLabels(data, categoryField);
+  const series = buildSingleValueSeries(data, valueField);
 
-  const chartType =
-    result.chart.chart_type === "donut" || embedding.is_donut
+  const pieType =
+    chartType === "donut" || embedding.is_donut
       ? ("donut" as const)
       : ("pie" as const);
 
   const baseOptions = buildApexBaseOptions({
-    chartId: result.meta.title || "pie-chart",
-    title: result.meta.title,
-    subtitle: result.meta.subtitle,
-    legendPosition: "right",
-    dataLabelsEnabled: true,
+    chartId: meta?.title || "pie-chart",
+    title: meta?.title,
+    subtitle: meta?.subtitle,
+    legendPosition: config?.legendPosition ?? "right",
+    dataLabelsEnabled: config?.dataLabelsEnabled ?? true,
+    toolbarVisible: config?.toolbarVisible,
   });
 
   const options = {
@@ -55,9 +47,9 @@ export default function PieChart({ variant }: PieChartProps) {
       pie: {
         expandOnClick: true,
         donut: {
-          size: chartType === "donut" ? "60%" : "0%",
+          size: pieType === "donut" ? "60%" : "0%",
           labels: {
-            show: chartType === "donut",
+            show: pieType === "donut",
           },
         },
       },
@@ -76,9 +68,9 @@ export default function PieChart({ variant }: PieChartProps) {
 
   return (
     <Chart
-      type={chartType}
-      width="100%"
-      height={350}
+      type={pieType}
+      width={config?.width ?? "100%"}
+      height={config?.height ?? 350}
       options={options}
       series={series}
     />
