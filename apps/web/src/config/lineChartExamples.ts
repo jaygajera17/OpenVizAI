@@ -39,7 +39,7 @@ export type GraphicalMeta = {
 };
 
 export type GraphicalChart = {
-  chart_type: Extract<ChartType, "line">;
+  chart_type: Extract<ChartType, "line" | "radar">;
   embedding: LineChartEmbedding;
 };
 

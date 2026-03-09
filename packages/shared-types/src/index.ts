@@ -9,11 +9,12 @@
  */
 export const SUPPORTED_CHART_TYPES = [
   "line",
+  "radar",
   "bar",
   "range_bar",
   "pie",
   "donut",
 ] as const;
 
-/** Union of all supported chart type strings: "line" | "bar" | "range_bar" | "pie" | "donut" */
+/** Union of all supported chart type strings: "line" | "radar" | "bar" | "range_bar" | "pie" | "donut" */
 export type ChartType = (typeof SUPPORTED_CHART_TYPES)[number];

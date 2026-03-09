@@ -23,6 +23,9 @@ Chart choice rules:
 - line:
   - Time/date/ordered progression on x-axis.
   - Trend and change-over-time questions.
+- radar:
+  - Compare multiple numeric metrics across a shared set of categories.
+  - Best when each category has values for one or more comparable series.
 - bar:
   - Category comparisons.
   - Existing binned/distribution columns.
@@ -37,6 +40,10 @@ Embedding rules by chart:
   - embedding.x: exactly one categorical/time field (array with one field).
   - embedding.y: one or more numeric fields (array).
   - embedding.category/value/start/end should be null unless chart-specific usage applies.
+- radar:
+  - embedding.x: exactly one category field (array with one field).
+  - embedding.y: one or more numeric fields (array).
+  - embedding.start, embedding.end, embedding.category, and embedding.value should be null.
 - range_bar:
   - embedding.x: exactly one label/category field.
   - embedding.start and embedding.end: exactly one field each.

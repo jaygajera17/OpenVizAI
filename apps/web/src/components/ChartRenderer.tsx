@@ -1,4 +1,5 @@
 import LineChart from "./LineChart";
+import RadarChart from "./RadarChart";
 import PieChart from "./PieChart";
 import BarChart from "./BarChart";
 import type { LineChartVariant } from "../config/lineChartExamples";
@@ -18,6 +19,10 @@ export default function ChartRenderer({ variant }: ChartRendererProps) {
     return <LineChart variant={variant as LineChartVariant} />;
   }
 
+  if (chartType === "radar") {
+    return <RadarChart variant={variant as LineChartVariant} />;
+  }
+
   if (chartType === "pie" || chartType === "donut") {
     return <PieChart variant={variant as PieChartVariant} />;
   }
@@ -28,4 +33,3 @@ export default function ChartRenderer({ variant }: ChartRendererProps) {
 
   return null;
 }
-
