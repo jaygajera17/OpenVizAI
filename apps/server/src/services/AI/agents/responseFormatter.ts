@@ -10,7 +10,8 @@ import { responseFormatterSchema } from "../config/zodSchema";
 import ChatHistoryService from "@services/chatHistory.service";
 import customErrorHandler from "@utils/customErrorHandler";
 import { Pool } from "pg";
-import { createResponseFormatterSchema } from "../config/createSchema";
+import SessionService from "@services/session.service";
+
 /**
  * This helper function transforms query results into a tabular format suitable
  * for display. All values are converted to strings to avoid type unions in the
@@ -55,47 +56,65 @@ const prepareSampleData = (data: any) => {
   return Array.isArray(sample) ? formatData(sample) : sample;
 };
 
+
+
 export const responseFormatterNode = async (state: any) => {
   try {
+    const userPrompt = state.userPrompt as string;
+    const data = state.data;
+    const sessionId = state.sessionId as string;
+    const userId = state.userId as string;
+
+    const pgPool = new Pool({
+      connectionString: DATABASE_URL,
+    });
+
+    await SessionService.ensureSessionExists(sessionId, userId, userPrompt);
+
+    const userMessage = new HumanMessage({
+      content: userPrompt,
+      additional_kwargs: {
+        data,
+      },
+    });
+
+    await ChatHistoryService.addChatHistory(sessionId, userMessage, pgPool);
+    const previousChatHistory = await ChatHistoryService.getPreviousMessages(
+      sessionId,
+      pgPool,
+    );
+
+    const sampleData = prepareSampleData(data);
+
     const model = new ChatOpenAI({
       apiKey: OPENAI_API_KEY,
       model: "gpt-4.1-nano-2025-04-14",
     });
 
-    const userPrompt = state.userPrompt;
-    const data = state.data;
-    const chartType = state.chartType as string;
-    const sessionId = state.sessionId;
-    const schema = createResponseFormatterSchema(chartType);
-
-    const sampleData = prepareSampleData(data);
-
-    const humanMessage = new HumanMessage({
-      content: userPrompt,
-    });
 
     const systemMessage = new SystemMessage(
-      responseFormatter(userPrompt, sampleData, chartType),
+      responseFormatter(userPrompt, sampleData),
     );
 
-    const messages = [systemMessage, humanMessage];
+    const messages = [...previousChatHistory, userMessage];
+    const contextMessages = [systemMessage, ...messages];
 
-    const response = await model
-      .withStructuredOutput(schema)
-      .invoke(messages);
-
+    const response = await model.withStructuredOutput(responseFormatterSchema).invoke(contextMessages);
+   
     const aiMessage = new AIMessage({
       response_metadata: response,
     });
 
-    const pgPool = new Pool({
-          connectionString: DATABASE_URL,
-        }); 
-    await ChatHistoryService.addChatHistory(sessionId, aiMessage,pgPool);
+    await ChatHistoryService.addChatHistory(sessionId, aiMessage, pgPool);
 
-    return { ...state, result: response };
+    return {
+      ...state,
+      messages,
+      result: response,
+      responseFormatterAgent: [userMessage, aiMessage],
+    };
   } catch (err) {
     console.error("Error in responseFormatterNode:", err);
-    throw new customErrorHandler(400,`${err}`);
+    throw new customErrorHandler(400, `${err}`);
   }
 };

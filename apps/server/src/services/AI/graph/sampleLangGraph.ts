@@ -1,6 +1,5 @@
 import { StateGraph, END, START, Annotation } from "@langchain/langgraph";
 import { responseFormatterNode } from "../agents/responseFormatter";
-import { chartIdentifierNode } from "../agents/chartIdentifier";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import { BaseMessage } from "@langchain/core/messages";
 
@@ -34,19 +33,14 @@ export const createSampleLangGraph = async (
     chartType: Annotation<string>(),
     chartReason: Annotation<string>(),
     result: Annotation<string>(),
-    chartIdentifierAgent: Annotation<BaseMessage[]>({
-      reducer: (x, y) => x.concat(y),
-    }),
     responseFormatterAgent: Annotation<BaseMessage[]>({
       reducer: (x, y) => x.concat(y),
     }),
   });
 
   const workflow = new StateGraph(StateAnnotation)
-    .addNode("chartIdentifier", chartIdentifierNode)
     .addNode("responseFormatter", responseFormatterNode)
-    .addEdge(START, "chartIdentifier")
-    .addEdge("chartIdentifier", "responseFormatter")
+    .addEdge(START, "responseFormatter")
     .addEdge("responseFormatter", END);
 
   const graph = workflow.compile({

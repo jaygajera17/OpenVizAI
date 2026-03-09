@@ -11,7 +11,6 @@ import SessionService from "@services/session.service";
 import ChatHistoryService from "@services/chatHistory.service";
 import { Pool } from "pg";
 import { formatData } from "./responseFormatter";
-import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 
 const prepareSampleData = (data: any) => {
   if (!data) {
@@ -55,7 +54,6 @@ export const chartIdentifierNode = async (state: any) => {
 
     const sampleData = prepareSampleData(data);
 
-    console.log(sampleData);
     const systemMessage = new SystemMessage(
       chartIdentifierPrompt(userPrompt, sampleData),
     );
@@ -79,7 +77,6 @@ export const chartIdentifierNode = async (state: any) => {
       chartIdentifierSchema,
     );
     const response = await modelWithStructure.invoke(contextMessages);
-    console.log(response);
 
     const aiMessage = new AIMessage(
       `Based on the user's prompt and the provided data, I've identified the most suitable chart type as '${response.chart_type}'.`,

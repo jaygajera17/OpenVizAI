@@ -1,17 +1,17 @@
-1) Frontend:  code refactor common type for all chart  
+1) Frontend:  code refactor common type for all chart  ( Done)
 2) Frontend: UI enhancement
 
-3) Backend code refactor - single prompt API call. ( Tool call for the chart identification)
+3) Backend code refactor - single prompt API call. (Done)
 
-4) Frotnend: Add New chart , Time series,Radar,etc..
+4) Frotnend+Backend: Add support of the New chart , Time series,Radar,etc..
 
 5) Frotnend+Backend:  Create/start new chat option in session sidebar
 
 6) Frontend: Upload CSV/JSON file option, JSON editor.
-7) Frontend: Sample testcases, ( prompt, data) in playground.
-8) Frontend: copy chart URL embedding
+7) Frontend: Sample example to try on in demo playground.
+8) Frontend: Provide option to copy chart URL embedding
 
-9) Frontend: Adapter layer (Apex/ChartJs/ECharts)
+9) Frontend: Adapter layer (Apex/ChartJs/ECharts) Design pattern.
 
 10) Frontend: chart theming , custom/AI generated 
 
