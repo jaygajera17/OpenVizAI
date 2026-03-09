@@ -1,6 +1,12 @@
 import Chart from "react-apexcharts";
 import type { LineChartVariant } from "../config/lineChartExamples";
 import { useChartState } from "../context/chartContext";
+import { buildApexBaseOptions } from "../utils/apexBaseOptions";
+import {
+  buildCategorySeriesLabels,
+  buildDatetimePoints,
+  buildNumericDataByField,
+} from "../utils/seriesBuilder";
 
 type LineChartProps = {
   variant: LineChartVariant;
@@ -18,10 +24,17 @@ export default function LineChart({ variant }: LineChartProps) {
   const { embedding } = result.chart;
   const xField = embedding.x[0]?.field;
   const isDatetime = embedding.x[0]?.unit === "datetime";
+  const baseOptions = buildApexBaseOptions({
+    chartId: result.meta.title || "line-chart",
+    title: result.meta.title,
+    subtitle: result.meta.subtitle,
+    legendPosition: "top",
+    dataLabelsEnabled: false,
+  });
 
   const categories =
     xField && !isDatetime
-      ? rows.map((row) => String(row[xField] ?? ""))
+      ? buildCategorySeriesLabels(rows, xField)
       : undefined;
 
   // Build distinct units to drive multi-axis behavior (per ApexCharts multi-axis docs)
@@ -44,29 +57,13 @@ export default function LineChart({ variant }: LineChartProps) {
     if (isDatetime && xField) {
       return {
         ...base,
-        data: rows.map((row) => {
-          const xRaw = row[xField];
-          const time =
-            typeof xRaw === "number"
-              ? xRaw
-              : new Date(String(xRaw)).getTime();
-          const value = row[yField.field];
-          const numeric = typeof value === "number" ? value : Number(value);
-          return {
-            x: time,
-            y: Number.isFinite(numeric) ? numeric : 0,
-          };
-        }),
+        data: buildDatetimePoints(rows, xField, yField.field),
       };
     }
 
     return {
       ...base,
-      data: rows.map((row) => {
-        const value = row[yField.field];
-        const numeric = typeof value === "number" ? value : Number(value);
-        return Number.isFinite(numeric) ? numeric : 0;
-      }),
+      data: buildNumericDataByField(rows, yField.field),
     };
   });
 
@@ -85,18 +82,13 @@ export default function LineChart({ variant }: LineChartProps) {
         };
 
   const options = {
+    ...baseOptions,
     chart: {
-      id: result.meta.title || "line-chart",
+      ...baseOptions.chart,
       stacked: embedding.is_stacked,
-      toolbar: {
-        show: true,
-      },
       animations: {
         enabled: true,
       },
-    },
-    dataLabels: {
-      enabled: false,
     },
     xaxis: {
       ...(categories ? { categories } : {}),
@@ -106,20 +98,9 @@ export default function LineChart({ variant }: LineChartProps) {
       },
     },
     yaxis,
-    legend: {
-      position: "top" as const,
-    },
     tooltip: {
       shared: true,
       intersect: false,
-    },
-    title: {
-      text: result.meta.title,
-      align: "left" as const,
-    },
-    subtitle: {
-      text: result.meta.subtitle ?? undefined,
-      align: "left" as const,
     },
     stroke: {
       curve: (embedding.line_curve ?? "smooth") as

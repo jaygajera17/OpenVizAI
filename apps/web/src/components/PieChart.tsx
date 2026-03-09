@@ -1,6 +1,11 @@
 import Chart from "react-apexcharts";
 import type { PieChartVariant } from "../config/pieChartExamples";
 import { useChartState } from "../context/chartContext";
+import { buildApexBaseOptions } from "../utils/apexBaseOptions";
+import {
+  buildCategorySeriesLabels,
+  buildSingleValueSeries,
+} from "../utils/seriesBuilder";
 
 type PieChartProps = {
   variant: PieChartVariant;
@@ -10,42 +15,36 @@ export default function PieChart({ variant }: PieChartProps) {
   const { result } = variant;
   const { embedding } = result.chart;
   const { rows } = useChartState();
-  
 
   const categoryField = embedding.category?.[0]?.field;
-const valueField = embedding.value?.[0]?.field;
+  const valueField = embedding.value?.[0]?.field;
 
-  const labels = rows.map((row) => String(row[categoryField] ?? ""));
-  const series = rows.map((row) => {
-    const value = row[valueField];
-    const numeric = typeof value === "number" ? value : Number(value);
-    return Number.isFinite(numeric) ? numeric : 0;
-  });
+  if (!categoryField || !valueField) {
+    return null;
+  }
+
+  const labels = buildCategorySeriesLabels(rows, categoryField);
+  const series = buildSingleValueSeries(rows, valueField);
 
   const chartType =
     result.chart.chart_type === "donut" || embedding.is_donut
       ? ("donut" as const)
       : ("pie" as const);
 
+  const baseOptions = buildApexBaseOptions({
+    chartId: result.meta.title || "pie-chart",
+    title: result.meta.title,
+    subtitle: result.meta.subtitle,
+    legendPosition: "right",
+    dataLabelsEnabled: true,
+  });
+
   const options = {
+    ...baseOptions,
     labels,
-    chart: {
-      id: result.meta.title || "pie-chart",
-    },
-    title: {
-      text: result.meta.title,
-      align: "left" as const,
-    },
-    subtitle: {
-      text: result.meta.subtitle ?? undefined,
-      align: "left" as const,
-    },
     dataLabels: {
-      enabled: true,
+      ...baseOptions.dataLabels,
       formatter: (val: number) => `${val.toFixed(1)}%`,
-    },
-    legend: {
-      position: "right" as const,
     },
     tooltip: {
       y: {
@@ -85,4 +84,3 @@ const valueField = embedding.value?.[0]?.field;
     />
   );
 }
-
