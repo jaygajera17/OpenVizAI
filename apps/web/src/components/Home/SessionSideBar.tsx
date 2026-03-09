@@ -16,14 +16,14 @@ const SessionSidebar: FC<Props> = ({ sessions, loading, onSelectSession }) => {
   const [activeSession, setActiveSession] = useState<string | null>(null);
 
   return (
-    <aside className="col-md-3 col-lg-2 mb-4">
-  <div className="card shadow-sm h-100">
+    <aside className="col-12 col-md-4 col-lg-3 col-xl-2 mb-4 mb-lg-0">
+  <div className="card h-100 home-card session-card">
 
-    <div className="card-header bg-primary text-white fw-semibold">
+    <div className="card-header fw-semibold session-card-header">
       <h6 className="mb-0">Your Sessions</h6>
     </div>
 
-    <div className="card-body p-0">
+    <div className="card-body p-0 session-card-body">
 
       {loading && (
         <div className="p-3 text-center text-muted small">
@@ -39,14 +39,13 @@ const SessionSidebar: FC<Props> = ({ sessions, loading, onSelectSession }) => {
 
       {!loading && sessions && sessions.length > 0 && (
         <ul
-          className="list-group list-group-flush overflow-auto"
-          style={{ maxHeight: "400px" }}
+          className="list-group list-group-flush overflow-auto session-list"
         >
           {sessions.map((s) => (
             <li
               key={s.session_id}
               className={`list-group-item list-group-item-action d-flex align-items-center
-              ${activeSession === s.session_id ? "active" : ""}`}
+              session-item ${activeSession === s.session_id ? "active" : ""}`}
               role="button"
               onClick={() => {
                 setActiveSession(s.session_id);
@@ -56,8 +55,8 @@ const SessionSidebar: FC<Props> = ({ sessions, loading, onSelectSession }) => {
               <small
                 className={
                   activeSession === s.session_id
-                    ? "text-white text-truncate"
-                    : "text-muted text-truncate"
+                    ? "text-white text-truncate session-item-title"
+                    : "text-muted text-truncate session-item-title"
                 }
               >
                 {s.title}

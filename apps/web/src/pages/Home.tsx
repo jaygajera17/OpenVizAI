@@ -81,13 +81,13 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <header className="navbar navbar-dark bg-dark mb-4">
-        <div className="container-fluid">
-          <span className="navbar-brand">OpenVizAI</span>
-          <div className="text-success">{user?.email}</div>
+      <header className="home-topbar">
+        <div className="home-topbar-inner">
+          <span className="home-brand">OpenVizAI</span>
+          <div className="home-user-email">{user?.email}</div>
           {user && (
             <button
-              className="btn btn-outline-light btn-sm"
+              className="btn btn-outline-light btn-sm home-logout-btn"
               onClick={handleLogout}
             >
               Logout
@@ -96,7 +96,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container-fluid px-4">
+      <div className="container-fluid px-3 px-md-4 home-content-wrap">
         <div className="row g-4">
           <SessionSidebar
             sessions={sessions}

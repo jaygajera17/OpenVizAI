@@ -52,16 +52,16 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
   };
 
   return (
-    <main className="col-lg-10">
-      <div className="card mb-4">
+    <main className="col-12 col-md-8 col-lg-9 col-xl-10">
+      <div className="card mb-4 home-card composer-card">
       
 
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
+        <div className="card-body composer-body">
+          <form onSubmit={handleSubmit} className="composer-form">
             <div className="mb-3">
-              <label className="form-label">Prompt</label>
+              <label className="form-label composer-label">Prompt</label>
               <textarea
-                className="form-control"
+                className="form-control composer-input"
                 rows={1}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
@@ -69,22 +69,22 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Data (JSON)</label>
+              <label className="form-label composer-label">Data (JSON)</label>
               <textarea
-                className="form-control font-monospace"
+                className="form-control font-monospace composer-input composer-json"
                 rows={4}
                 value={dataInput}
                 onChange={(e) => setDataInput(e.target.value)}
               />
             </div>
 
-            {dataError && <div className="alert alert-danger">{dataError}</div>}
+            {dataError && <div className="alert alert-danger composer-alert">{dataError}</div>}
 
-            {error && <div className="alert alert-danger">{error}</div>}
+            {error && <div className="alert alert-danger composer-alert">{error}</div>}
 
             <button
               type="submit"
-              className="btn btn-primary w-100 fw-semibold"
+              className="btn btn-primary w-100 fw-semibold generate-btn"
               disabled={loading}
             >
               {loading ? "Generating..." : "Generate Chart"}
@@ -94,13 +94,13 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
       </div>
 
       {chartResult && (
-        <div className="card">
-          <div className="card-header bg-info text-white d-flex flex-column">
+        <div className="card home-card result-card">
+          <div className="card-header text-white d-flex flex-column result-card-header">
             <h5 className="mb-1">{chartResult.meta.title}</h5>
-            <small className="opacity-75">{chartResult.meta.query_explanation}</small>
+            <small className="result-subtitle">{chartResult.meta.query_explanation}</small>
           </div>
 
-          <div className="card-body">
+          <div className="card-body result-card-body">
             {(
               <ChartRenderer
                 variant={
