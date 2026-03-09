@@ -1,9 +1,9 @@
 1) Frontend:  code refactor common type for all chart  ( Done)
-2) Frontend: UI enhancement
+2) Frontend: UI enhancement (Done)
 
 3) Backend code refactor - single prompt API call. (Done)
 
-4) Frotnend+Backend: Add support of the New chart , Time series,Radar,etc..
+4) Frotnend+Backend: Add support of the New chart , Time series,Radar,etc.. (Radar done , other less priority)
 
 5) Frotnend+Backend:  Create/start new chat option in session sidebar
 
