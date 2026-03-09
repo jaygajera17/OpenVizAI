@@ -1,3 +1,5 @@
+import type { ChartType } from "@openvizai/shared-types";
+
 export type EmbeddingAxisField = {
   field: string;
   label: string;
@@ -37,7 +39,7 @@ export type GraphicalMeta = {
 };
 
 export type GraphicalChart = {
-  chart_type: "line";
+  chart_type: Extract<ChartType, "line">;
   embedding: LineChartEmbedding;
 };
 
@@ -63,7 +65,7 @@ export const monthlyFinanceVariant: LineChartVariant = {
     response_type: "graphical",
     meta: {
       title: "Monthly Revenue and Expenses Comparison",
-      subtitle: 'abcd...',
+      subtitle: "abcd...",
       query_explanation:
         "A line chart showing revenue, expenses, and profit over months to illustrate financial trends.",
     },
@@ -528,4 +530,3 @@ export const allLineChartVariants: LineChartVariant[] = [
   multiAxisVariant,
   timeSeriesForecastVariant,
 ];
-

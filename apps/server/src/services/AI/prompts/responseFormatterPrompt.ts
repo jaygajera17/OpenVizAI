@@ -1,3 +1,5 @@
+import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
+
 export const responseFormatter = (userPrompt: string, dataSample: any) => `
 You are a data visualization planner that returns a single schema-compliant JSON object.
 
@@ -13,7 +15,7 @@ UserPrompt:
 ${userPrompt}
 
 Chart-type selection (single call; no external selector):
-- You MUST choose chart.chart_type yourself from: "line", "bar", "range_bar", "pie", "donut".
+- You MUST choose chart.chart_type yourself from: ${SUPPORTED_CHART_TYPES.map(t => `"${t}"`).join(', ')}.
 - If user explicitly requests a chart type, follow it when data supports readable output.
 - If user request is unsuitable (for example too many slices for pie), choose the nearest truthful alternative.
 
@@ -80,7 +82,7 @@ STRICT output contract:
     "response_type": "graphical",
     "meta": { "title": string, "subtitle": string|null, "query_explanation": string },
     "chart": {
-      "chart_type": "line"|"bar"|"range_bar"|"pie"|"donut",
+      "chart_type": ${SUPPORTED_CHART_TYPES.map(t => `"${t}"`).join('|')},
       "embedding": {
         "x": EmbeddingField[] | null,
         "y": EmbeddingFieldWithType[] | null,

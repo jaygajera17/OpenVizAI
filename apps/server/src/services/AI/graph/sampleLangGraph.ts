@@ -2,6 +2,7 @@ import { StateGraph, END, START, Annotation } from "@langchain/langgraph";
 import { responseFormatterNode } from "../agents/responseFormatter";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import { BaseMessage } from "@langchain/core/messages";
+import type { ChartType } from "@openvizai/shared-types";
 
 export const createSampleLangGraph = async (
   checkPointer: PostgresSaver,
@@ -30,7 +31,7 @@ export const createSampleLangGraph = async (
       value: (x, y) => y,
       default: () => userPrompt,
     }),
-    chartType: Annotation<string>(),
+    chartType: Annotation<ChartType>(),
     chartReason: Annotation<string>(),
     result: Annotation<string>(),
     responseFormatterAgent: Annotation<BaseMessage[]>({

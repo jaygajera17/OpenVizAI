@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import type { ChartType } from "@openvizai/shared-types";
 import { APIService } from "../../services/apiService";
 
 export interface GenerateAnswerRequest {
@@ -43,7 +44,7 @@ export interface GenerateAnswerResponse {
       query_explanation: string;
     };
     chart: {
-      chart_type: string;
+      chart_type: ChartType;
       embedding: ChartEmbedding;
     };
   };

@@ -1,3 +1,5 @@
+import type { ChartType } from "@openvizai/shared-types";
+
 export type Session = {
   session_id: string;
   user_id: string;
@@ -7,9 +9,9 @@ export type Session = {
 };
 
 type Meta = {
-    title: string,
-    subtitle: string
-}
+  title: string;
+  subtitle: string;
+};
 
 interface ChartEmbedding {
   x: Array<{
@@ -38,31 +40,28 @@ interface ChartEmbedding {
   colorSemantic: null | unknown;
 }
 
-
 export type Message = {
-  type: 'human' | 'ai';
+  type: "human" | "ai";
   content: string;
   additional_kwargs: {
-    data: string
+    data: string;
   };
   response_metadata: {
     meta: Meta;
     chart: {
-          chart_type: string;
-          embedding: ChartEmbedding;
-        };
+      chart_type: ChartType;
+      embedding: ChartEmbedding;
+    };
     response_type: string;
-   
-  }
-}
+  };
+};
 
 export type MessageResponse = {
-  id: string
-  message: Message
-}
-
+  id: string;
+  message: Message;
+};
 
 export type SessionMessageResponse = {
-  session: Session
-  messages: MessageResponse[]
-}
+  session: Session;
+  messages: MessageResponse[];
+};

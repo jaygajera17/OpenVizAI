@@ -1,7 +1,6 @@
-export const chartIdentifierPrompt = (
-  userPrompt: string,
-  dataSample: any,
-) => `
+import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
+
+export const chartIdentifierPrompt = (userPrompt: string, dataSample: any) => `
 You are a senior data visualization expert and chart selector.
 Your job is to pick the single most appropriate chart_type for the given user prompt and data sample.
 
@@ -38,10 +37,9 @@ ${userPrompt}
 <@OUTPUT FORMAT@>
 Return STRICTLY valid JSON with this shape:
 {
-  "chart_type": "line" | "bar" | "range_bar" | "pie" | "donut",
+  "chart_type": ${SUPPORTED_CHART_TYPES.map((t) => `"${t}"`).join(" | ")},
   "reason": "short natural language justification"
 }
 
 Do NOT include any additional fields. Do NOT wrap the JSON in markdown.
 `;
-
