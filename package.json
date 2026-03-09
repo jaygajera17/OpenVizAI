@@ -11,6 +11,7 @@
     "dev:server": "cd apps/server && npm run dev",
     "dev:web": "cd apps/web && npm run dev",
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:web\"",
+    "build:core": "cd packages/core && npm run build",
     "bootstrap": "npm install",
     "db:migrate": "npx prisma migrate dev --create-only && npx prisma generate",
     "db:push": "npx prisma db push"

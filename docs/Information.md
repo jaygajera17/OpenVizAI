@@ -124,23 +124,20 @@ OpenVizAI uses a multi-stage pipeline:
 
 Prompt + dataset sent from frontend to backend.
 
-2. **Chart Identifier Agent (LLM)**
 
-Determines the most appropriate chart type.
-
-3. **Response Formatter Agent (LLM)**
+2. **Response Formatter Agent (LLM)**
 
 Generates chart embedding metadata describing how to map dataset fields.
 
-4. **Frontend Chart Renderer**
+3. **Frontend Chart Renderer**
 
 Receives metadata and dataset.
 
-5. **Embedding Functions**
+4. **Embedding Functions**
 
 JavaScript functions map the full dataset to chart-compatible structures.
 
-6. **Chart Rendering**
+5. **Chart Rendering**
 
 Charts are rendered using ApexCharts.
 
