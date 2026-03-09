@@ -17,7 +17,13 @@ function normalizeField(
   return field;
 }
 
-export default function BarChart({ data, chartType, embedding, meta, config }: ChartComponentProps) {
+export default function BarChart({
+  data,
+  chartType,
+  embedding,
+  meta,
+  config,
+}: ChartComponentProps) {
   const apexType =
     chartType === "range_bar" || embedding.is_range
       ? ("rangeBar" as const)

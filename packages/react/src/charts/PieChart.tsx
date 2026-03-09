@@ -6,7 +6,13 @@ import {
   buildSingleValueSeries,
 } from "../embedding/seriesBuilder";
 
-export default function PieChart({ data, chartType, embedding, meta, config }: ChartComponentProps) {
+export default function PieChart({
+  data,
+  chartType,
+  embedding,
+  meta,
+  config,
+}: ChartComponentProps) {
   const categoryField = embedding.category?.[0]?.field;
   const valueField = embedding.value?.[0]?.field;
 

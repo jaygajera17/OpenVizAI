@@ -7,7 +7,12 @@ import {
   buildNumericDataByField,
 } from "../embedding/seriesBuilder";
 
-export default function LineChart({ data, embedding, meta, config }: ChartComponentProps) {
+export default function LineChart({
+  data,
+  embedding,
+  meta,
+  config,
+}: ChartComponentProps) {
   const xField = embedding.x?.[0]?.field;
   const isDatetime = embedding.x?.[0]?.unit === "datetime";
   const yFields = embedding.y ?? [];
@@ -22,15 +27,11 @@ export default function LineChart({ data, embedding, meta, config }: ChartCompon
   });
 
   const categories =
-    xField && !isDatetime
-      ? buildCategorySeriesLabels(data, xField)
-      : undefined;
+    xField && !isDatetime ? buildCategorySeriesLabels(data, xField) : undefined;
 
   // Build distinct units to drive multi-axis behavior
   const unitKeys = Array.from(
-    new Set(
-      yFields.map((yField) => (yField.unit ? yField.unit : "default")),
-    ),
+    new Set(yFields.map((yField) => (yField.unit ? yField.unit : "default"))),
   );
 
   const series = yFields.map((yField) => {

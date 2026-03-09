@@ -6,7 +6,12 @@ import {
   buildNumericSeries,
 } from "../embedding/seriesBuilder";
 
-export default function RadarChart({ data, embedding, meta, config }: ChartComponentProps) {
+export default function RadarChart({
+  data,
+  embedding,
+  meta,
+  config,
+}: ChartComponentProps) {
   const xField = embedding.x?.[0]?.field;
   const yFields = embedding.y ?? [];
 
