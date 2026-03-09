@@ -1,0 +1,77 @@
+/* Home page styles */
+.home-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.home-container main {
+  min-height: calc(100vh - 90px);
+}
+
+/* Custom scrollbar for textarea */
+textarea:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Card hover effect */
+.card {
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Chart result card styling */
+.card-header.bg-info {
+  background-color: #0dcaf0 !important;
+}
+
+/* Button styling */
+button.btn {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+button.btn:disabled {
+  cursor: not-allowed;
+}
+
+/* Sessions list styling */
+.list-group-item {
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+  border-left-color: #0d6efd;
+  background-color: #f8f9fa;
+}
+
+/* Sidebar improvements */
+.list-group-item.active {
+  background-color: #9dbceb;
+  border-color: #5b93e6;
+}
+
+.list-group-item:hover {
+  background-color: #f1f5ff;
+}
+
+/* Better card appearance */
+.card {
+  border-radius: 10px;
+}
+
+/* Navbar spacing */
+.navbar {
+  padding: 0.6rem 1.2rem;
+}
+
+/* Chart container */
+.card-body {
+  padding: 1.5rem;
+}

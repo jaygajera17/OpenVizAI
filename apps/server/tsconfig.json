@@ -17,11 +17,13 @@
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
       "@constants/*": ["src/constants/*"],
+      "@db": ["../../db.ts"],
       "core/*": ["src/core/*"]
     },
     "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
+    "rootDir": "." /* Specify the root directory of input files. */,
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
     "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
     "resolveJsonModule": true /* Enable importing .json files. */,
@@ -32,6 +34,6 @@
     "skipLibCheck": true
   },
   "lib": ["es2021"],
-  "include": ["src", "test", "prisma"],
+  "include": ["src", "test", "prisma", "../../db.ts"],
   "exclude": ["node_modules"]
 }
