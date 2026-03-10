@@ -1,6 +1,9 @@
-// Main entry point
+// Main entry point — single chart
 export { analyzeChart } from "./analysis/analyzeChart";
 export type { AnalyzeChartOptions } from "./analysis/analyzeChart";
+
+// Dashboard — multi chart
+export { analyzeDashboard } from "./analysis/analyzeDashboard";
 
 // Schema validation
 export { responseFormatterSchema } from "./config/zodSchemas";
@@ -27,6 +30,13 @@ export type {
   EmbeddingFieldWithType,
   ChartEmbedding,
 } from "./types/index";
+
+export type {
+  DashboardChartItem,
+  DashboardResult,
+  AnalyzeDashboardInput,
+  AnalyzeDashboardResult,
+} from "./types/dashboard";
 
 // Errors
 export {

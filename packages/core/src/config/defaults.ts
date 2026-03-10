@@ -9,7 +9,7 @@ export interface ResolvedConfig {
 }
 
 export const DEFAULT_CONFIG = {
-  model: "gpt-4.1-nano-2025-04-14",
+  model: "gpt-4.1-mini",
   sampleRows: 3,
   maxRetries: 2,
 } as const;

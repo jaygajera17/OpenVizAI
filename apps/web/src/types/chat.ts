@@ -52,7 +52,13 @@ export type ChartMeta = {
   query_explanation: string;
 };
 
-export type ChartResultData = {
+export type DashboardChartItem = {
+  chart_type: ChartType;
+  meta: ChartMeta;
+  embedding: ChartEmbedding;
+};
+
+export type SingleChartResult = {
   response_type: "graphical";
   meta: ChartMeta;
   chart: {
@@ -61,13 +67,20 @@ export type ChartResultData = {
   };
 };
 
+export type DashboardResult = {
+  response_type: "dashboard";
+  charts: DashboardChartItem[];
+};
+
+export type ChartResultData = SingleChartResult | DashboardResult;
+
 export type Message = {
   type: "human" | "ai";
   content: string;
   additional_kwargs: {
     data?: unknown;
   };
-  response_metadata: ChartResultData;
+  response_metadata: SingleChartResult;
 };
 
 export type MessageResponse = {

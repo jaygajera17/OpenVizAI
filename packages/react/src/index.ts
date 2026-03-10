@@ -1,6 +1,9 @@
 // Main component
 export { default as OpenVizRenderer } from "./OpenVizRenderer";
 
+// Dashboard component
+export { default as OpenVizDashboard } from "./OpenVizDashboard";
+
 // Chart registry (for plugin system)
 export {
   registerChart,
@@ -18,6 +21,8 @@ export type {
   ChartMeta,
   OpenVizConfig,
   OpenVizRendererProps,
+  DashboardChartItem,
+  OpenVizDashboardProps,
 } from "./types";
 
 // Internal chart component props type (for custom chart registration)

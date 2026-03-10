@@ -9,3 +9,10 @@ export type {
   EmbeddingFieldWithType,
   ChartEmbedding,
 } from "./embedding";
+
+export type {
+  DashboardChartItem,
+  DashboardResult,
+  AnalyzeDashboardInput,
+  AnalyzeDashboardResult,
+} from "./dashboard";

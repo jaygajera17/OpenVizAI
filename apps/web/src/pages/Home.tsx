@@ -58,13 +58,12 @@ export default function Home() {
 
           const meta = ai.message.response_metadata?.meta;
           const chart = ai.message.response_metadata?.chart;
-          const response_type = ai.message.response_metadata?.response_type;
 
           if (meta && chart) {
             setChartResult({
               meta,
               chart,
-              response_type: response_type ?? "graphical",
+              response_type: "graphical",
             });
           }
         } catch {
@@ -84,11 +83,17 @@ export default function Home() {
     prompt,
     data,
     sessionId,
+    dashboardMode,
+    maxCharts,
+    charts,
   }: GenerateAnswerRequest) => {
     generateAnswerMutation.mutate({
       prompt,
       data,
       sessionId,
+      dashboardMode,
+      maxCharts,
+      charts,
     });
   };
 

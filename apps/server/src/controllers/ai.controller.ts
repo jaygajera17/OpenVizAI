@@ -8,6 +8,8 @@ import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import pgPool from "@config/pgPool";
 import logger from "@logger/index";
 import { IAuthUser } from "@interfaces/user";
+import { analyzeDashboard } from "@openvizai/core";
+import { OPENAI_API_KEY } from "@config/secrets";
 
 // extend request to include authenticated user
 interface AuthRequest extends Request {
@@ -79,7 +81,8 @@ class AIController {
     next: NextFunction,
   ) {
     try {
-      const { prompt, data, sessionId } = req.body;
+      const { prompt, data, sessionId, dashboardMode, maxCharts, charts } =
+        req.body;
       const userId = req.user.id;
 
       // Validate request body
@@ -102,6 +105,28 @@ class AIController {
         });
       }
 
+      // Dashboard mode: generate multiple charts via analyzeDashboard
+      if (dashboardMode) {
+        const { result } = await analyzeDashboard({
+          prompt,
+          data,
+          config: { apiKey: OPENAI_API_KEY },
+          charts,
+          maxCharts,
+        });
+
+        return successResponse(
+          res,
+          HTTP_STATUS_CODE.OK,
+          "dashboard generated",
+          {
+            result,
+            rows: data,
+          },
+        );
+      }
+
+      // Default: single chart via LangGraph
       const postgresSaver = new PostgresSaver(pgPool);
 
       const graph = await createSampleLangGraph(

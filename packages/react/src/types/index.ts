@@ -5,3 +5,8 @@ export type {
   OpenVizConfig,
   OpenVizRendererProps,
 } from "./renderer";
+
+export type {
+  DashboardChartItem,
+  OpenVizDashboardProps,
+} from "./dashboard";
