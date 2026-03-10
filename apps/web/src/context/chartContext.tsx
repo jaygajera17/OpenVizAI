@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
+import type { ChartResultData } from "../types/chat";
 
 type ChartState = {
   rows: Record<string, unknown>[];
@@ -10,18 +11,17 @@ type ChartState = {
   dataInput: string;
   setDataInput: (d: string) => void;
 
-  chartResult: any;
-  setChartResult: (r: any) => void;
-
-}
+  chartResult: ChartResultData | null;
+  setChartResult: (r: ChartResultData | null) => void;
+};
 
 const ChartContext = createContext<ChartState | null>(null);
 
 export function ChartProvider({ children }: { children: ReactNode }) {
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
   const [prompt, setPrompt] = useState("");
   const [dataInput, setDataInput] = useState("");
-  const [chartResult, setChartResult] = useState(null);
+  const [chartResult, setChartResult] = useState<ChartResultData | null>(null);
 
   return (
     <ChartContext.Provider

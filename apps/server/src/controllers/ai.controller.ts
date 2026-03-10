@@ -5,8 +5,7 @@ import SessionService from "../services/session.service";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import ChatHistoryService from "@services/chatHistory.service";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
-import { DATABASE_URL } from "@config/secrets";
-import { Pool } from "pg";
+import pgPool from "@config/pgPool";
 import logger from "@logger/index";
 import { IAuthUser } from "@interfaces/user";
 
@@ -83,9 +82,26 @@ class AIController {
       const { prompt, data, sessionId } = req.body;
       const userId = req.user.id;
 
-      const pgPool = new Pool({
-        connectionString: DATABASE_URL,
-      });
+      // Validate request body
+      if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
+          statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+          message: "prompt must be a non-empty string",
+        });
+      }
+      if (!Array.isArray(data) || data.length === 0) {
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
+          statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+          message: "data must be a non-empty array of objects",
+        });
+      }
+      if (!sessionId || typeof sessionId !== "string") {
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
+          statusCode: HTTP_STATUS_CODE.BAD_REQUEST,
+          message: "sessionId must be a non-empty string",
+        });
+      }
+
       const postgresSaver = new PostgresSaver(pgPool);
 
       const graph = await createSampleLangGraph(

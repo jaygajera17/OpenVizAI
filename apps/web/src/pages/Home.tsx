@@ -2,13 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../hooks/auth/useCurrentUser";
 import { useSessions } from "../hooks/session/useSessions";
 import { useGenerateAnswer } from "../hooks/ai/useGenerateAnswer";
+import type { GenerateAnswerRequest } from "../hooks/ai/useGenerateAnswer";
 import { removeLocalStorageItem } from "../utils/storage";
 import { STORAGE_KEYS } from "../constants/storage";
 import "./Home.css";
 
 import SessionSidebar from "../components/Home/SessionSideBar";
 import ChartPlayground from "../components/Home/ChartPlayground";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSessionMessages } from "../hooks/session/useSessionMessages";
 import { useChartState } from "../context/chartContext";
 
@@ -29,38 +30,46 @@ export default function Home() {
   const handleSessionClick = (sessionId: string) => {
     sessionMessagesMutation.mutate(sessionId, {
       onSuccess: (response) => {
-        const messages = response.messages;
+        try {
+          const messages = response.messages;
 
-        const human = messages.find((m) => m.message.type === "human");
+          const human = messages.find((m) => m.message.type === "human");
+          const ai = messages.find((m) => m.message.type === "ai");
 
-        const ai = messages.find((m) => m.message.type === "ai");
+          if (!human || !ai) return;
 
-        if (!human || !ai) return;
+          const prompt = human.message.content;
+          const rawData = human.message.additional_kwargs?.data;
 
-        const prompt = human.message.content;
-        const dataString = human.message.additional_kwargs?.data ?? "[]";
-        console.log(dataString)
-        const data = JSON.parse(JSON.stringify(dataString));
+          let data: Record<string, unknown>[] = [];
+          if (typeof rawData === "string") {
+            try {
+              data = JSON.parse(rawData);
+            } catch {
+              data = [];
+            }
+          } else if (Array.isArray(rawData)) {
+            data = rawData;
+          }
 
-        setPrompt(prompt);
-        setDataInput(JSON.stringify(data, null, 2));
-        setRows(data);
+          setPrompt(prompt);
+          setDataInput(JSON.stringify(data, null, 2));
+          setRows(data);
 
-        const chartResult = {
-          result: {
-            meta: ai.message.response_metadata.meta,
-            chart: ai.message.response_metadata.chart,
-            response_type: ai.message.response_metadata.response_type,
-          },
-          rows: data,
-        };
-        console.log(prompt, data, chartResult);
+          const meta = ai.message.response_metadata?.meta;
+          const chart = ai.message.response_metadata?.chart;
+          const response_type = ai.message.response_metadata?.response_type;
 
-        setChartResult({
-          meta: ai.message.response_metadata.meta,
-          chart: ai.message.response_metadata.chart,
-          response_type: ai.message.response_metadata.response_type,
-        });
+          if (meta && chart) {
+            setChartResult({
+              meta,
+              chart,
+              response_type: response_type ?? "graphical",
+            });
+          }
+        } catch {
+          // Silently handle malformed session data
+        }
       },
     });
   };
@@ -71,7 +80,11 @@ export default function Home() {
     navigate("/login");
   };
 
-  const handleGenerate = ({ prompt, data, sessionId }: any) => {
+  const handleGenerate = ({
+    prompt,
+    data,
+    sessionId,
+  }: GenerateAnswerRequest) => {
     generateAnswerMutation.mutate({
       prompt,
       data,

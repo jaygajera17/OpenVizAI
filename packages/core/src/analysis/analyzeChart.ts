@@ -5,6 +5,8 @@ import { sampleDataset } from "./datasetSampler";
 import { formatData } from "../utils/formatData";
 import { generateEmbedding } from "../agents/embeddingGeneratorAgent";
 import { validateInput } from "../utils/validation";
+import { inspectSchema } from "./schemaInspector";
+import { validateEmbeddingConsistency } from "../utils/embeddingValidator";
 
 export interface AnalyzeChartOptions extends AnalyzeChartInput {
   /** Optional chat history for multi-turn conversation context */
@@ -29,17 +31,24 @@ export async function analyzeChart(
   // 3. Sample dataset
   const sampleUsed = sampleDataset(input.data, config.sampleRows);
 
-  // 4. Format sample into tabular structure for LLM
+  // 4. Inspect schema for column type hints
+  const schema = inspectSchema(sampleUsed);
+
+  // 5. Format sample into tabular structure for LLM
   const sampleData = formatData(sampleUsed);
 
-  // 5. Call LLM to generate chart embedding
+  // 6. Call LLM to generate chart embedding
   const result = await generateEmbedding({
     prompt: input.prompt,
     sampleData,
     config,
     chatHistory: input.chatHistory,
+    schema,
   });
 
-  // 6. Return result
-  return { result, sampleUsed };
+  // 7. Post-LLM validation: ensure chart_type matches filled embedding fields
+  const validated = validateEmbeddingConsistency(result);
+
+  // 8. Return result
+  return { result: validated, sampleUsed };
 }

@@ -34,6 +34,26 @@ export default function BarChart({
   const startField = normalizeField(embedding.start);
   const endField = normalizeField(embedding.end);
 
+  // Guard: bar/column needs either x+y or range fields
+  if (!xField && !startField) {
+    return (
+      <div
+        style={{
+          padding: "24px",
+          textAlign: "center",
+          color: "#6b7280",
+          border: "1px dashed #d1d5db",
+          borderRadius: "8px",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          Unable to render bar chart: missing required axis fields.
+        </p>
+      </div>
+    );
+  }
+
   const baseOptions = buildApexBaseOptions({
     chartId: meta?.title || "bar-chart",
     title: meta?.title,
@@ -45,7 +65,12 @@ export default function BarChart({
 
   let series;
 
-  if (embedding.is_range && startField && endField && xField) {
+  if (
+    (chartType === "range_bar" || embedding.is_range) &&
+    startField &&
+    endField &&
+    xField
+  ) {
     // Range bar chart: data points as { x: category, y: [start, end] }
     series = [
       {

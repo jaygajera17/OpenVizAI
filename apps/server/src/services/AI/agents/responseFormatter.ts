@@ -1,9 +1,9 @@
 import { analyzeChart } from "@openvizai/core";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { DATABASE_URL, OPENAI_API_KEY } from "@config/secrets";
+import { OPENAI_API_KEY } from "@config/secrets";
+import pgPool from "@config/pgPool";
 import ChatHistoryService from "@services/chatHistory.service";
 import customErrorHandler from "@utils/customErrorHandler";
-import { Pool } from "pg";
 import SessionService from "@services/session.service";
 
 export const responseFormatterNode = async (state: any) => {
@@ -12,10 +12,6 @@ export const responseFormatterNode = async (state: any) => {
     const data = state.data;
     const sessionId = state.sessionId as string;
     const userId = state.userId as string;
-
-    const pgPool = new Pool({
-      connectionString: DATABASE_URL,
-    });
 
     await SessionService.ensureSessionExists(sessionId, userId, userPrompt);
 
@@ -32,7 +28,7 @@ export const responseFormatterNode = async (state: any) => {
       pgPool,
     );
 
-    // Delegate to @openvizai/core 
+    // Delegate to @openvizai/core
     const { result } = await analyzeChart({
       prompt: userPrompt,
       data: Array.isArray(data) ? data : [],

@@ -2,6 +2,19 @@
 export { analyzeChart } from "./analysis/analyzeChart";
 export type { AnalyzeChartOptions } from "./analysis/analyzeChart";
 
+// Schema validation
+export { responseFormatterSchema } from "./config/zodSchemas";
+
+// Schema inspection
+export { inspectSchema } from "./analysis/schemaInspector";
+export type { SchemaColumn, SchemaInfo } from "./analysis/schemaInspector";
+
+// Post-LLM validation
+export { validateEmbeddingConsistency } from "./utils/embeddingValidator";
+
+// Prompt (for consumers who need the raw prompt template)
+export { responseFormatterPrompt } from "./prompts/responseFormatterPrompt";
+
 // Types
 export type {
   ChartMeta,

@@ -16,7 +16,22 @@ export default function RadarChart({
   const yFields = embedding.y ?? [];
 
   if (!xField) {
-    return null;
+    return (
+      <div
+        style={{
+          padding: "24px",
+          textAlign: "center",
+          color: "#6b7280",
+          border: "1px dashed #d1d5db",
+          borderRadius: "8px",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          Unable to render radar chart: missing required x-axis field.
+        </p>
+      </div>
+    );
   }
 
   const labels = buildCategorySeriesLabels(data, xField);

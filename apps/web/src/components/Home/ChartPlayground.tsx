@@ -6,7 +6,7 @@ import { useChartState } from "../../context/chartContext";
 interface Props {
   onGenerate: (payload: {
     prompt: string;
-    data: Record<string, unknown>;
+    data: Record<string, unknown>[];
     sessionId: string;
   }) => void;
   loading: boolean;
@@ -26,7 +26,6 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
     dataInput,
     setDataInput,
     chartResult,
-    setChartResult,
   } = useChartState();
 
   const handleSubmit = (e: React.FormEvent) => {

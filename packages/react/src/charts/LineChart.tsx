@@ -17,6 +17,25 @@ export default function LineChart({
   const isDatetime = embedding.x?.[0]?.unit === "datetime";
   const yFields = embedding.y ?? [];
 
+  if (!xField || yFields.length === 0) {
+    return (
+      <div
+        style={{
+          padding: "24px",
+          textAlign: "center",
+          color: "#6b7280",
+          border: "1px dashed #d1d5db",
+          borderRadius: "8px",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          Unable to render line chart: missing required x-axis or y-axis fields.
+        </p>
+      </div>
+    );
+  }
+
   const baseOptions = buildApexBaseOptions({
     chartId: meta?.title || "line-chart",
     title: meta?.title,

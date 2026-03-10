@@ -17,4 +17,9 @@ export function validateInput(input: AnalyzeChartInput): void {
   if (!first || typeof first !== "object" || Array.isArray(first)) {
     throw new InvalidInputError("data items must be plain objects");
   }
+
+  const keys = Object.keys(first);
+  if (keys.length === 0) {
+    throw new InvalidInputError("data objects must have at least one field");
+  }
 }

@@ -5,12 +5,14 @@ import { responseFormatterSchema } from "../config/zodSchemas";
 import { LLMError } from "../errors/index";
 import type { ResolvedConfig } from "../config/defaults";
 import type { ChartResult } from "../types/chart";
+import type { SchemaInfo } from "../analysis/schemaInspector";
 
 export interface GenerateEmbeddingOptions {
   prompt: string;
   sampleData: { columns: string[]; rows: string[][] };
   config: ResolvedConfig;
   chatHistory?: BaseMessage[];
+  schema?: SchemaInfo;
 }
 
 /**
@@ -20,7 +22,7 @@ export interface GenerateEmbeddingOptions {
 export async function generateEmbedding(
   options: GenerateEmbeddingOptions,
 ): Promise<ChartResult> {
-  const { prompt, sampleData, config, chatHistory } = options;
+  const { prompt, sampleData, config, chatHistory, schema } = options;
 
   try {
     const model = new ChatOpenAI({
@@ -31,7 +33,7 @@ export async function generateEmbedding(
     });
 
     const systemMessage = new SystemMessage(
-      responseFormatterPrompt(prompt, sampleData),
+      responseFormatterPrompt(prompt, sampleData, schema),
     );
 
     const messages: BaseMessage[] = [systemMessage, ...(chatHistory ?? [])];

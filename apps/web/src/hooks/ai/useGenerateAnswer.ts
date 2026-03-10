@@ -1,54 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
-import type { ChartType } from "@openvizai/shared-types";
 import { APIService } from "../../services/apiService";
+import type { ChartResultData } from "../../types/chat";
 
 export interface GenerateAnswerRequest {
   prompt: string;
-  data: Record<string, unknown>;
+  data: Record<string, unknown>[];
   sessionId: string;
 }
 
-export interface ChartEmbedding {
-  x: Array<{
-    field: string;
-    label: string;
-    unit: string;
-  }>;
-  y: Array<{
-    field: string;
-    label: string;
-    unit: string;
-    type: string;
-  }>;
-  group: null | unknown;
-  category: null | unknown;
-  value: null | unknown;
-  source: null | unknown;
-  target: null | unknown;
-  start: null | unknown;
-  end: null | unknown;
-  series: null | unknown;
-  path: null | unknown;
-  is_stacked: boolean;
-  is_horizontal: boolean;
-  isSemanticColors: boolean;
-  colorSemantic: null | unknown;
-}
-
 export interface GenerateAnswerResponse {
-  result: {
-    response_type: string;
-    meta: {
-      title: string;
-      subtitle: string;
-      query_explanation: string;
-    };
-    chart: {
-      chart_type: ChartType;
-      embedding: ChartEmbedding;
-    };
-  };
-  rows: any[];
+  result: ChartResultData;
+  rows: Record<string, unknown>[];
 }
 
 export const useGenerateAnswer = () => {
