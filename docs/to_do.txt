@@ -1,0 +1,34 @@
+1) Frontend:  code refactor common type for all chart  ( Done)
+2) Frontend: UI enhancement (Done)
+
+3) Backend code refactor - single prompt API call. (Done)
+
+4) Frotnend+Backend: Add support of the New chart , Time series,Radar,etc.. (Radar done , other less priority)
+
+5) Frotnend+Backend:  Create/start new chat option in session sidebar
+
+6) Frontend: Upload CSV/JSON file option, JSON editor.
+7) Frontend: Sample example to try on in demo playground.
+8) Frontend: Provide option to copy chart URL embedding.
+
+9) Frontend: Adapter layer (Apex/ChartJs/ECharts) Design pattern.
+
+10) Frontend: chart theming , custom/AI generated 
+
+11) Packaging the project (done)
+    11.1)  apps->playground for demo dashboard
+    11.2)  viz Engine API package - for Backend
+    11.3)  viz engine renderer package - for frontend
+    11.4) config file 
+
+
+------
+
+Backend: Few shot examples.
+Frontend: Add example data.
+
+1) Deploy playground : Openrouter Integration , Frontend and backend deployment
+2) Google Analytics integration Frotnend
+3) Readme polish
+4) Library docs
+5) npm package release

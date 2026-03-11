@@ -1,4 +1,6 @@
- type EmbeddingField = {
+import type { ChartType } from "@openvizai/shared-types";
+
+type EmbeddingField = {
   field: string;
   label: string;
   unit?: string | null;
@@ -20,7 +22,7 @@ export type PieGraphicalMeta = {
 };
 
 export type PieGraphicalChart = {
-  chart_type: "pie" | "donut";
+  chart_type: Extract<ChartType, "pie" | "donut">;
   embedding: PieChartEmbedding;
 };
 
@@ -36,8 +38,3 @@ export type PieChartVariant = {
   result: PieGraphicalResult;
   rows: Record<string, string | number>[];
 };
-
-
-
-
-
