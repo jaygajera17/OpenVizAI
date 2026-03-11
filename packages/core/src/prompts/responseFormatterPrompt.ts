@@ -1,6 +1,21 @@
 import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
+import type { SchemaInfo } from "../analysis/schemaInspector";
 
-export const responseFormatter = (userPrompt: string, dataSample: any) => `
+function formatSchemaHints(schema?: SchemaInfo): string {
+  if (!schema || schema.columns.length === 0) return "";
+
+  const lines = schema.columns.map((col) => `  - "${col.name}" (${col.type})`);
+  return `
+Column schema (inferred types):
+${lines.join("\n")}
+`;
+}
+
+export const responseFormatterPrompt = (
+  userPrompt: string,
+  dataSample: unknown,
+  schema?: SchemaInfo,
+): string => `
 You are a data visualization planner that returns a single schema-compliant JSON object.
 
 Primary goal:
@@ -10,12 +25,12 @@ Primary goal:
 
 Data Sample (columns + preview rows already preprocessed for you):
 ${JSON.stringify(dataSample)}
-
+${formatSchemaHints(schema)}
 UserPrompt:
 ${userPrompt}
 
 Chart-type selection (single call; no external selector):
-- You MUST choose chart.chart_type yourself from: ${SUPPORTED_CHART_TYPES.map(t => `"${t}"`).join(', ')}.
+- You MUST choose chart.chart_type yourself from: ${SUPPORTED_CHART_TYPES.map((t) => `"${t}"`).join(", ")}.
 - If user explicitly requests a chart type, follow it when data supports readable output.
 - If user request is unsuitable (for example too many slices for pie), choose the nearest truthful alternative.
 
@@ -35,6 +50,19 @@ Chart choice rules:
   - Only for 2-5 categories forming one whole.
   - Use donut when user asks for donut/ring or center readability helps.
 
+Identifier and non-chartable field rules:
+- Fields named "id", "_id", "uuid", "index", "key", "pk", "row_number", or similar identifiers are ROW IDENTIFIERS, not measurements.
+- NEVER use identifier fields as y-axis, value, or numeric series fields.
+- Identifier fields may only be used as x-axis labels or category fields if no better categorical field exists.
+- Boolean fields should not be used as y-axis numeric fields.
+
+Handling data with no numeric fields:
+- If the dataset has NO numeric fields (all columns are strings, booleans, or identifiers), use a bar chart that counts occurrences of the most meaningful categorical field.
+  - Set embedding.x to the categorical field.
+  - Set embedding.y to a single field with field: "<count>", label: "Count", unit: null, type: "bar".
+  - The frontend will handle count aggregation.
+- If the dataset has only one meaningful numeric field plus identifiers, prefer a simple bar chart.
+
 Embedding rules by chart:
 - line/bar:
   - embedding.x: exactly one categorical/time field (array with one field).
@@ -53,6 +81,13 @@ Embedding rules by chart:
   - embedding.category: exactly one field.
   - embedding.value: exactly one numeric field.
   - embedding.x and embedding.y should be null.
+
+Consistency rule (CRITICAL):
+- The embedding fields you fill MUST match the chart_type.
+- For pie/donut: you MUST fill category and value, and x/y MUST be null.
+- For line/bar/radar: you MUST fill x and y, and category/value MUST be null.
+- For range_bar: you MUST fill x, start, and end. y MUST be null.
+- Violating this will cause a rendering failure.
 
 Field integrity and determinism:
 - Use only fields that exist in the provided data sample.
@@ -89,7 +124,7 @@ STRICT output contract:
     "response_type": "graphical",
     "meta": { "title": string, "subtitle": string|null, "query_explanation": string },
     "chart": {
-      "chart_type": ${SUPPORTED_CHART_TYPES.map(t => `"${t}"`).join('|')},
+      "chart_type": ${SUPPORTED_CHART_TYPES.map((t) => `"${t}"`).join("|")},
       "embedding": {
         "x": EmbeddingField[] | null,
         "y": EmbeddingFieldWithType[] | null,

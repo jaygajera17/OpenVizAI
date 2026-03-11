@@ -8,52 +8,79 @@ export type Session = {
   updated_ts: string;
 };
 
-type Meta = {
-  title: string;
-  subtitle: string;
+export type EmbeddingField = {
+  field: string;
+  label: string;
+  unit: string | null;
 };
 
-interface ChartEmbedding {
-  x: Array<{
-    field: string;
-    label: string;
-    unit: string;
-  }>;
-  y: Array<{
-    field: string;
-    label: string;
-    unit: string;
-    type: string;
-  }>;
-  group: null | unknown;
-  category: null | unknown;
-  value: null | unknown;
-  source: null | unknown;
-  target: null | unknown;
-  start: null | unknown;
-  end: null | unknown;
-  series: null | unknown;
-  path: null | unknown;
+export type EmbeddingFieldWithType = EmbeddingField & {
+  type: "bar" | "line" | "area";
+};
+
+export type ChartEmbedding = {
+  x: EmbeddingField[] | null;
+  y: EmbeddingFieldWithType[] | null;
+  group: EmbeddingField[] | null;
+  category: EmbeddingField[] | null;
+  value: EmbeddingField[] | null;
+  source: EmbeddingField[] | null;
+  target: EmbeddingField[] | null;
+  start: EmbeddingField[] | null;
+  end: EmbeddingField[] | null;
+  series: EmbeddingField[] | null;
+  path: EmbeddingField[] | null;
   is_stacked: boolean;
   is_horizontal: boolean;
   isSemanticColors: boolean;
-  colorSemantic: null | unknown;
-}
+  colorSemantic:
+    | "positive"
+    | "negative"
+    | "neutral"
+    | "warning"
+    | "caution"
+    | "target"
+    | "highlight"
+    | "missing"
+    | "forecast"
+    | null;
+};
+
+export type ChartMeta = {
+  title: string;
+  subtitle: string | null;
+  query_explanation: string;
+};
+
+export type DashboardChartItem = {
+  chart_type: ChartType;
+  meta: ChartMeta;
+  embedding: ChartEmbedding;
+};
+
+export type SingleChartResult = {
+  response_type: "graphical";
+  meta: ChartMeta;
+  chart: {
+    chart_type: ChartType;
+    embedding: ChartEmbedding;
+  };
+};
+
+export type DashboardResult = {
+  response_type: "dashboard";
+  charts: DashboardChartItem[];
+};
+
+export type ChartResultData = SingleChartResult | DashboardResult;
 
 export type Message = {
   type: "human" | "ai";
   content: string;
   additional_kwargs: {
-    data: string;
+    data?: unknown;
   };
-  response_metadata: {
-    meta: Meta;
-    chart: {
-      chart_type: ChartType;
-      embedding: ChartEmbedding;
-    };
-    response_type: string;
-  };
+  response_metadata: SingleChartResult;
 };
 
 export type MessageResponse = {

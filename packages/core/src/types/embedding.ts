@@ -1,13 +1,12 @@
 import { z } from "zod";
-import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
 
-const EmbeddingFieldSchema = z.object({
+export const EmbeddingFieldSchema = z.object({
   field: z.string(),
   label: z.string(),
   unit: z.string().nullable(),
 });
 
-const EmbeddingFieldTypeSchema = EmbeddingFieldSchema.extend({
+export const EmbeddingFieldTypeSchema = EmbeddingFieldSchema.extend({
   type: z
     .enum(["bar", "line", "area"])
     .describe(
@@ -15,10 +14,10 @@ const EmbeddingFieldTypeSchema = EmbeddingFieldSchema.extend({
     ),
 });
 
-// Chart-agnostic embedding with predefined keys (arrays may be empty).
-// This is intentionally generic so a single schema can represent
-// line, bar/column, rangeBar, and combo charts in a library-agnostic way.
-const EmbeddingSchema = z.object({
+export type EmbeddingField = z.infer<typeof EmbeddingFieldSchema>;
+export type EmbeddingFieldWithType = z.infer<typeof EmbeddingFieldTypeSchema>;
+
+export const EmbeddingSchema = z.object({
   x: z.array(EmbeddingFieldSchema).nullable(),
   y: z.array(EmbeddingFieldTypeSchema).nullable(),
   group: z.array(EmbeddingFieldSchema).nullable(),
@@ -55,15 +54,4 @@ const EmbeddingSchema = z.object({
     ),
 });
 
-export const responseFormatterSchema = z.object({
-  response_type: z.literal("graphical"),
-  meta: z.object({
-    title: z.string(),
-    subtitle: z.string().nullable(),
-    query_explanation: z.string(),
-  }),
-  chart: z.object({
-    chart_type: z.enum(SUPPORTED_CHART_TYPES),
-    embedding: EmbeddingSchema,
-  }),
-});
+export type ChartEmbedding = z.infer<typeof EmbeddingSchema>;

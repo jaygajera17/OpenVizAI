@@ -1,5 +1,15 @@
 // Shared data coercion helpers used by chart components and series builders.
-export function toFiniteNumber(value: unknown, fallback = 0): number {
+
+/**
+ * Coerce a value to a finite number.
+ * Returns null for non-numeric/missing values so ApexCharts renders gaps
+ * instead of misleading zeros.
+ */
+export function toFiniteNumber(
+  value: unknown,
+  fallback: number | null = null,
+): number | null {
+  if (value === null || value === undefined || value === "") return fallback;
   const numeric = typeof value === "number" ? value : Number(value);
   return Number.isFinite(numeric) ? numeric : fallback;
 }

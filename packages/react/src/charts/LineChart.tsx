@@ -1,50 +1,59 @@
 import Chart from "react-apexcharts";
-import type { LineChartVariant } from "../config/lineChartExamples";
-import { useChartState } from "../context/chartContext";
-import { buildApexBaseOptions } from "../utils/apexBaseOptions";
+import type { ChartComponentProps } from "./types";
+import { buildApexBaseOptions } from "../embedding/apexBaseOptions";
 import {
   buildCategorySeriesLabels,
   buildDatetimePoints,
   buildNumericDataByField,
-} from "../utils/seriesBuilder";
+} from "../embedding/seriesBuilder";
 
-type LineChartProps = {
-  variant: LineChartVariant;
-};
+export default function LineChart({
+  data,
+  embedding,
+  meta,
+  config,
+}: ChartComponentProps) {
+  const xField = embedding.x?.[0]?.field;
+  const isDatetime = embedding.x?.[0]?.unit === "datetime";
+  const yFields = embedding.y ?? [];
 
-export default function LineChart({ variant }: LineChartProps) {
-  const { result } = variant;
-  const { rows } = useChartState();
-
-  if (result.chart.chart_type !== "line") {
-    // For safety: this component only handles line charts
-    return null;
+  if (!xField || yFields.length === 0) {
+    return (
+      <div
+        style={{
+          padding: "24px",
+          textAlign: "center",
+          color: "#6b7280",
+          border: "1px dashed #d1d5db",
+          borderRadius: "8px",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          Unable to render line chart: missing required x-axis or y-axis fields.
+        </p>
+      </div>
+    );
   }
 
-  const { embedding } = result.chart;
-  const xField = embedding.x[0]?.field;
-  const isDatetime = embedding.x[0]?.unit === "datetime";
   const baseOptions = buildApexBaseOptions({
-    chartId: result.meta.title || "line-chart",
-    title: result.meta.title,
-    subtitle: result.meta.subtitle,
-    legendPosition: "top",
-    dataLabelsEnabled: false,
+    chartId: meta?.title || "line-chart",
+    title: meta?.title,
+    subtitle: meta?.subtitle,
+    legendPosition: config?.legendPosition ?? "top",
+    dataLabelsEnabled: config?.dataLabelsEnabled ?? false,
+    toolbarVisible: config?.toolbarVisible,
   });
 
   const categories =
-    xField && !isDatetime
-      ? buildCategorySeriesLabels(rows, xField)
-      : undefined;
+    xField && !isDatetime ? buildCategorySeriesLabels(data, xField) : undefined;
 
-  // Build distinct units to drive multi-axis behavior (per ApexCharts multi-axis docs)
+  // Build distinct units to drive multi-axis behavior
   const unitKeys = Array.from(
-    new Set(
-      embedding.y.map((yField) => (yField.unit ? yField.unit : "default")),
-    ),
+    new Set(yFields.map((yField) => (yField.unit ? yField.unit : "default"))),
   );
 
-  const series = embedding.y.map((yField) => {
+  const series = yFields.map((yField) => {
     const axisKey = yField.unit ? yField.unit : "default";
     const yAxisIndex = unitKeys.indexOf(axisKey);
 
@@ -57,13 +66,13 @@ export default function LineChart({ variant }: LineChartProps) {
     if (isDatetime && xField) {
       return {
         ...base,
-        data: buildDatetimePoints(rows, xField, yField.field),
+        data: buildDatetimePoints(data, xField, yField.field),
       };
     }
 
     return {
       ...base,
-      data: buildNumericDataByField(rows, yField.field),
+      data: buildNumericDataByField(data, yField.field),
     };
   });
 
@@ -87,14 +96,14 @@ export default function LineChart({ variant }: LineChartProps) {
       ...baseOptions.chart,
       stacked: embedding.is_stacked,
       animations: {
-        enabled: true,
+        enabled: config?.animations ?? true,
       },
     },
     xaxis: {
       ...(categories ? { categories } : {}),
       type: isDatetime ? ("datetime" as const) : ("category" as const),
       title: {
-        text: embedding.x[0]?.label ?? undefined,
+        text: embedding.x?.[0]?.label ?? undefined,
       },
     },
     yaxis,
@@ -124,8 +133,8 @@ export default function LineChart({ variant }: LineChartProps) {
   return (
     <Chart
       type="line"
-      width="100%"
-      height={350}
+      width={config?.width ?? "100%"}
+      height={config?.height ?? 350}
       options={options}
       series={series}
     />

@@ -14,6 +14,7 @@ export default defineConfig({
         __dirname,
         "../../packages/shared-types/src",
       ),
+      "@openvizai/react": resolve(__dirname, "../../packages/react/src"),
     },
   },
 });

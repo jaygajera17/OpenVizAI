@@ -1,27 +1,5 @@
 import { toCategoryString, toFiniteNumber, toMilliseconds } from "./chartData";
 
-/*
-Usage examples:
-
-Bar/Column:
-const categories = buildCategorySeriesLabels(rows, "month");
-const series = buildNumericSeries(rows, [
-  { field: "revenue", label: "Revenue" },
-  { field: "expenses", label: "Expenses" },
-]);
-
-Line (datetime):
-const points = buildDatetimePoints(rows, "date", "signups");
-const lineSeries = [{ name: "Signups", data: points }];
-
-Pie/Donut:
-const labels = buildCategorySeriesLabels(rows, "department");
-const values = buildSingleValueSeries(rows, "spend");
-
-Range Bar:
-const rangeData = buildRangeBarPoints(rows, "project", "start", "end");
-*/
-
 type Row = Record<string, unknown>;
 
 type YFieldLike = {
@@ -38,6 +16,7 @@ export function buildCategorySeriesLabels(
 }
 
 // Builds numeric series used by bar-like and category-line charts.
+// Returns null for missing values so ApexCharts can render gaps.
 export function buildNumericSeries(rows: Row[], yFields: YFieldLike[]) {
   return yFields.map((yField) => ({
     name: yField.label || yField.field,
@@ -45,32 +24,36 @@ export function buildNumericSeries(rows: Row[], yFields: YFieldLike[]) {
   }));
 }
 
-// Builds numeric data for one field; useful when component needs custom series metadata.
-export function buildNumericDataByField(rows: Row[], yField: string): number[] {
+// Builds numeric data for one field; null = gap in the chart.
+export function buildNumericDataByField(
+  rows: Row[],
+  yField: string,
+): (number | null)[] {
   return rows.map((row) => toFiniteNumber(row[yField]));
 }
 
 // Builds pie/donut numeric values from a single field.
+// Pie charts cannot handle null, so fallback to 0.
 export function buildSingleValueSeries(
   rows: Row[],
   valueField: string,
 ): number[] {
-  return rows.map((row) => toFiniteNumber(row[valueField]));
+  return rows.map((row) => toFiniteNumber(row[valueField], 0) ?? 0);
 }
 
-// Builds datetime points for ApexCharts time-series format: { x: timestamp, y: number }.
+// Builds datetime points for ApexCharts time-series format: { x: timestamp, y: number | null }.
 export function buildDatetimePoints(
   rows: Row[],
   xField: string,
   yField: string,
-): Array<{ x: number; y: number }> {
+): Array<{ x: number; y: number | null }> {
   return rows.map((row) => ({
     x: toMilliseconds(row[xField]),
     y: toFiniteNumber(row[yField]),
   }));
 }
 
-// Builds range-bar points for ApexCharts format: { x: category, y: [start, end] }.
+// Builds range-bar points for ApexCharts format: { x: category, y: [number, number] }.
 export function buildRangeBarPoints(
   rows: Row[],
   xField: string,
