@@ -1,6 +1,6 @@
 import { analyzeChart } from "@openvizai/core";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { OPENAI_API_KEY } from "@config/secrets";
+import { GEMINI_API_KEY, OPENAI_API_KEY } from "@config/secrets";
 import pgPool from "@config/pgPool";
 import ChatHistoryService from "@services/chatHistory.service";
 import customErrorHandler from "@utils/customErrorHandler";
@@ -33,9 +33,10 @@ export const responseFormatterNode = async (state: any) => {
       prompt: userPrompt,
       data: Array.isArray(data) ? data : [],
       config: {
-        apiKey: OPENAI_API_KEY,
-      },
-      chatHistory: previousChatHistory,
+        apiKey: GEMINI_API_KEY,
+        provider: "google",
+        model: "gemini-3-flash-preview",
+      }
     });
 
     const aiMessage = new AIMessage({

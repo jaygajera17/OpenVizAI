@@ -1,5 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { SystemMessage } from "@langchain/core/messages";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { dashboardPlannerPrompt } from "../prompts/dashboardPlannerPrompt";
 import { dashboardResponseSchema } from "../config/dashboardSchema";
 import { LLMError } from "../errors/index";
@@ -7,6 +7,8 @@ import type { ResolvedConfig } from "../config/defaults";
 import type { DashboardChartItem } from "../types/dashboard";
 import type { SchemaInfo } from "../analysis/schemaInspector";
 import type { ChartType } from "@openvizai/shared-types";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { dashboardResponseSchemaRaw } from "../config/JsonSchemas";
 
 export interface GenerateDashboardEmbeddingsOptions {
   prompt: string;
@@ -23,23 +25,39 @@ export async function generateDashboardEmbeddings(
   const { prompt, sampleData, config, schema, charts, maxCharts } = options;
 
   try {
-    const model = new ChatOpenAI({
-      apiKey: config.apiKey,
-      model: config.model,
-      maxRetries: config.maxRetries,
-      ...(config.baseURL ? { configuration: { baseURL: config.baseURL } } : {}),
-    });
+    let model: ChatOpenAI | ChatGoogleGenerativeAI;
+
+    switch (config.provider) {
+      case "google":
+        model = new ChatGoogleGenerativeAI({
+          apiKey: config.apiKey,
+          model: config.model,
+        });
+        break;
+      default:
+        model = new ChatOpenAI({
+          apiKey: config.apiKey,
+          model: config.model,
+        });
+        break;
+    }
 
     const systemMessage = new SystemMessage(
       dashboardPlannerPrompt(prompt, sampleData, schema, charts, maxCharts),
     );
 
+    const humanMessage = new HumanMessage("Generate the dashboard plan.");
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const structuredModel = (model as any).withStructuredOutput(
-      dashboardResponseSchema,
+      config.provider === "openai"
+        ? dashboardResponseSchema
+        : dashboardResponseSchemaRaw,
     );
-    const response = await structuredModel.invoke([systemMessage]);
-
+    const response = await structuredModel.invoke([
+      systemMessage,
+      humanMessage,
+    ]);
     return (response as { charts: DashboardChartItem[] }).charts;
   } catch (err) {
     if (err instanceof LLMError) throw err;

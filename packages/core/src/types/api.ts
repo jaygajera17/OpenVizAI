@@ -1,11 +1,10 @@
 import type { ChartResult } from "./chart";
 
 export interface AnalyzeChartConfig {
+  provider?: "openai" | "google";
   apiKey?: string;
   model?: string;
   sampleRows?: number;
-  maxRetries?: number;
-  baseURL?: string;
 }
 
 export interface AnalyzeChartInput {

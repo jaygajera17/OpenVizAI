@@ -4,6 +4,7 @@ import { OpenVizRenderer, OpenVizDashboard } from "@openvizai/react";
 import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
 import type { ChartType } from "@openvizai/shared-types";
 import { useChartState } from "../../context/chartContext";
+import { PLAYGROUND_EXAMPLES } from "../../config/playgroundExamples";
 
 interface Props {
   onGenerate: (payload: {
@@ -21,6 +22,7 @@ interface Props {
 export default function ChartPlayground({ onGenerate, loading, error }: Props) {
   const [dataError, setDataError] = useState("");
   const [chartDropdownOpen, setChartDropdownOpen] = useState(false);
+  const [selectedExampleId, setSelectedExampleId] = useState("");
 
   const {
     rows,
@@ -44,6 +46,18 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
         ? preferredCharts.filter((t) => t !== type)
         : [...preferredCharts, type],
     );
+  };
+
+  const applyExample = (exampleId: string) => {
+    const selected = PLAYGROUND_EXAMPLES.find((item) => item.id === exampleId);
+    if (!selected) {
+      return;
+    }
+
+    setPrompt(selected.prompt);
+    setRows(selected.data);
+    setDataInput(JSON.stringify(selected.data, null, 2));
+    setDataError("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -82,6 +96,41 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
       <div className="card mb-4 home-card composer-card">
         <div className="card-body composer-body">
           <form onSubmit={handleSubmit} className="composer-form">
+            <div className="mb-3">
+              <label className="form-label composer-label">Try Example</label>
+              <div className="d-flex gap-2 align-items-center flex-wrap">
+                <select
+                  className="form-select composer-input"
+                  value={selectedExampleId}
+                  onChange={(e) => {
+                    const exampleId = e.target.value;
+                    setSelectedExampleId(exampleId);
+                    if (exampleId) {
+                      applyExample(exampleId);
+                    }
+                  }}
+                >
+                  <option value="">Select sample prompt + data</option>
+                  {PLAYGROUND_EXAMPLES.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  disabled={!selectedExampleId}
+                  onClick={() => applyExample(selectedExampleId)}
+                >
+                  Fill Example
+                </button>
+              </div>
+              <small className="text-muted">
+                Selecting an example auto-fills both prompt and JSON data.
+              </small>
+            </div>
+
             <div className="mb-3">
               <label className="form-label composer-label">Prompt</label>
               <textarea

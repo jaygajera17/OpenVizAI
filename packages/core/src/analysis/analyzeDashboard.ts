@@ -24,11 +24,7 @@ export async function analyzeDashboard(
   validateInput(input);
 
   // 2. Resolve config — use a stronger model for dashboard (multi-chart output)
-  const config = resolveConfig({
-    ...input.config,
-    model: input.config?.model ?? "gpt-4.1-mini-2025-04-14",
-    sampleRows: input.config?.sampleRows ?? 5,
-  });
+  const config = resolveConfig(input.config);
 
   // 3. Sample dataset
   const sampleUsed = sampleDataset(input.data, config.sampleRows);

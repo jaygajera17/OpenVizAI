@@ -1,11 +1,17 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { SystemMessage, type BaseMessage } from "@langchain/core/messages";
+import {
+  HumanMessage,
+  SystemMessage,
+  type BaseMessage,
+} from "@langchain/core/messages";
 import { responseFormatterPrompt } from "../prompts/responseFormatterPrompt";
 import { responseFormatterSchema } from "../config/zodSchemas";
 import { LLMError } from "../errors/index";
 import type { ResolvedConfig } from "../config/defaults";
 import type { ChartResult } from "../types/chart";
 import type { SchemaInfo } from "../analysis/schemaInspector";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { responseFormatterSchemaRaw } from "../config/JsonSchemas";
 
 export interface GenerateEmbeddingOptions {
   prompt: string;
@@ -25,23 +31,41 @@ export async function generateEmbedding(
   const { prompt, sampleData, config, chatHistory, schema } = options;
 
   try {
-    const model = new ChatOpenAI({
-      apiKey: config.apiKey,
-      model: config.model,
-      maxRetries: config.maxRetries,
-      ...(config.baseURL ? { configuration: { baseURL: config.baseURL } } : {}),
-    });
+    let model: ChatOpenAI | ChatGoogleGenerativeAI;
+
+    switch (config.provider) {
+      case "google":
+        model = new ChatGoogleGenerativeAI({
+          apiKey: config.apiKey,
+          model: config.model,
+        });
+        break;
+      default:
+        model = new ChatOpenAI({
+          apiKey: config.apiKey,
+          model: config.model,
+        });
+        break;
+    }
 
     const systemMessage = new SystemMessage(
       responseFormatterPrompt(prompt, sampleData, schema),
     );
+    const humanMessage = new HumanMessage(prompt);
 
-    const messages: BaseMessage[] = [systemMessage, ...(chatHistory ?? [])];
+    const messages: BaseMessage[] = chatHistory?.length
+      ? [systemMessage, ...chatHistory, humanMessage]
+      : [systemMessage, humanMessage];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- LangChain's withStructuredOutput Zod generics exceed TS depth limit
-    const structuredModel = (model as any).withStructuredOutput(
-      responseFormatterSchema,
-    );
+    // Avoid excessive type instantiation from mixed Zod/JSON schema inference.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const outputSchema: any =
+      config.provider === "openai"
+        ? responseFormatterSchema
+        : responseFormatterSchemaRaw;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const structuredModel = (model as any).withStructuredOutput(outputSchema);
     const response = await structuredModel.invoke(messages);
 
     return response as ChartResult;

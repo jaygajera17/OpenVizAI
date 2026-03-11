@@ -1,32 +1,44 @@
 import type { AnalyzeChartConfig } from "../types/api";
 
 export interface ResolvedConfig {
+  provider: "openai" | "google";
   apiKey: string;
   model: string;
   sampleRows: number;
-  maxRetries: number;
-  baseURL?: string;
 }
 
 export const DEFAULT_CONFIG = {
-  model: "gpt-4.1-mini",
+  provider: "google",
+  openaiModel: "gpt-4.1-mini",
+  googleModel: "gemini-3-flash-preview",
   sampleRows: 3,
-  maxRetries: 2,
 } as const;
 
 export function resolveConfig(config?: AnalyzeChartConfig): ResolvedConfig {
-  const apiKey = config?.apiKey ?? process.env.OPENAI_API_KEY;
+  const provider = config?.provider ?? DEFAULT_CONFIG.provider;
+
+  const apiKey = config?.apiKey
+    ? config.apiKey
+    : provider === "openai"
+      ? process.env.OPENAI_API_KEY
+      : process.env.GEMINI_API_KEY;
+
   if (!apiKey) {
     throw new Error(
-      "API key is required. Provide it via config.apiKey or the OPENAI_API_KEY environment variable.",
+      "API key is required. Provide it via config.apiKey or the OPENAI_API_KEY or GEMINI_API_KEY environment variable.",
     );
   }
 
+  const model =
+    config?.model ??
+    (provider === "openai"
+      ? DEFAULT_CONFIG.openaiModel
+      : DEFAULT_CONFIG.googleModel);
+
   return {
+    provider,
     apiKey,
-    model: config?.model ?? DEFAULT_CONFIG.model,
+    model,
     sampleRows: config?.sampleRows ?? DEFAULT_CONFIG.sampleRows,
-    maxRetries: config?.maxRetries ?? DEFAULT_CONFIG.maxRetries,
-    baseURL: config?.baseURL,
   };
 }
