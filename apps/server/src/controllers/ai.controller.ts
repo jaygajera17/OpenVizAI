@@ -46,7 +46,6 @@ class AIController {
           message: "sessionId must be a non-empty string",
         });
       }
-      console.log(GEMINI_API_KEY)
       // Dashboard mode: generate multiple charts via analyzeDashboard
       if (dashboardMode) {
         const { result } = await analyzeDashboard({

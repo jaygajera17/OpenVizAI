@@ -16,8 +16,8 @@ export const dashboardResponseSchema = z.object({
   charts: z
     .array(dashboardChartItemSchema)
     .min(1)
-    .max(4)
+    .max(5)
     .describe(
-      "MUST return 1-4 chart objects. Each chart must use a DIFFERENT chart_type or different fields. Cover diverse aspects: trend, comparison, distribution.",
+      "MUST return 1-5 chart objects. Each chart must use a DIFFERENT chart_type or different fields. Cover diverse aspects: trend, comparison, distribution.",
     ),
 });
