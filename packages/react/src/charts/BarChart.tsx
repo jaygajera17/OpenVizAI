@@ -1,3 +1,4 @@
+import { useId } from "react";
 import Chart from "react-apexcharts";
 import type { ChartComponentProps } from "./types";
 import type { EmbeddingField } from "../types";
@@ -17,6 +18,74 @@ function normalizeField(
   return field;
 }
 
+function isNumericLike(value: unknown): boolean {
+  if (value === null || value === undefined || value === "") return false;
+  if (typeof value === "number") return Number.isFinite(value);
+  const parsed = Number(value);
+  return Number.isFinite(parsed);
+}
+
+function inferRangeFields(
+  rows: Record<string, unknown>[],
+  xField: string | undefined,
+  yFields: EmbeddingField[],
+  startField: EmbeddingField | undefined,
+  endField: EmbeddingField | undefined,
+): {
+  xField: string | undefined;
+  startField: EmbeddingField | undefined;
+  endField: EmbeddingField | undefined;
+} {
+  let resolvedX = xField;
+  let resolvedStart = startField;
+  let resolvedEnd = endField;
+
+  if ((!resolvedStart || !resolvedEnd) && yFields.length >= 2) {
+    resolvedStart = resolvedStart ?? {
+      field: yFields[0].field,
+      label: yFields[0].label,
+    };
+    resolvedEnd = resolvedEnd ?? {
+      field: yFields[1].field,
+      label: yFields[1].label,
+    };
+  }
+
+  if ((!resolvedStart || !resolvedEnd) && rows.length > 0) {
+    const sample = rows[0] ?? {};
+    const keys = Object.keys(sample);
+    const numericKeys = keys.filter(
+      (key) => key !== resolvedX && rows.some((row) => isNumericLike(row[key])),
+    );
+
+    if (!resolvedStart && numericKeys[0]) {
+      resolvedStart = { field: numericKeys[0], label: numericKeys[0] };
+    }
+    if (!resolvedEnd && numericKeys[1]) {
+      resolvedEnd = { field: numericKeys[1], label: numericKeys[1] };
+    }
+  }
+
+  if (!resolvedX && rows.length > 0) {
+    const sample = rows[0] ?? {};
+    const keys = Object.keys(sample);
+    const categoricalKey = keys.find(
+      (key) =>
+        key !== resolvedStart?.field &&
+        key !== resolvedEnd?.field &&
+        !rows.some((row) => isNumericLike(row[key])),
+    );
+
+    resolvedX = categoricalKey ?? keys[0];
+  }
+
+  return {
+    xField: resolvedX,
+    startField: resolvedStart,
+    endField: resolvedEnd,
+  };
+}
+
 export default function BarChart({
   data,
   chartType,
@@ -24,18 +93,32 @@ export default function BarChart({
   meta,
   config,
 }: ChartComponentProps) {
-  const apexType =
-    chartType === "range_bar" || embedding.is_range
-      ? ("rangeBar" as const)
-      : ("bar" as const);
+  const instanceId = useId();
+  const isRangeChart = chartType === "range_bar" || embedding.is_range;
+
+  const apexType = isRangeChart ? ("rangeBar" as const) : ("bar" as const);
+  const chartId = `${meta?.title || "bar-chart"}-${apexType}-${instanceId}`;
 
   const xField = embedding.x?.[0]?.field;
   const yFields = embedding.y ?? [];
   const startField = normalizeField(embedding.start);
   const endField = normalizeField(embedding.end);
 
+  const resolvedRangeFields = inferRangeFields(
+    data,
+    xField,
+    yFields,
+    startField,
+    endField,
+  );
+
   // Guard: bar/column needs either x+y or range fields
-  if (!xField && !startField) {
+  if (
+    !xField &&
+    !resolvedRangeFields.xField &&
+    !startField &&
+    !resolvedRangeFields.startField
+  ) {
     return (
       <div
         style={{
@@ -55,7 +138,7 @@ export default function BarChart({
   }
 
   const baseOptions = buildApexBaseOptions({
-    chartId: meta?.title || "bar-chart",
+    chartId,
     title: meta?.title,
     subtitle: meta?.subtitle,
     legendPosition: config?.legendPosition ?? "top",
@@ -66,23 +149,59 @@ export default function BarChart({
   let series;
 
   if (
-    (chartType === "range_bar" || embedding.is_range) &&
-    startField &&
-    endField &&
-    xField
+    isRangeChart &&
+    resolvedRangeFields.startField &&
+    resolvedRangeFields.endField &&
+    resolvedRangeFields.xField
   ) {
     // Range bar chart: data points as { x: category, y: [start, end] }
     series = [
       {
-        name: `${startField.label ?? "Start"} - ${endField.label ?? "End"}`,
+        name: `${resolvedRangeFields.startField.label ?? "Start"} - ${resolvedRangeFields.endField.label ?? "End"}`,
         data: buildRangeBarPoints(
           data,
-          xField,
-          startField.field,
-          endField.field,
+          resolvedRangeFields.xField,
+          resolvedRangeFields.startField.field,
+          resolvedRangeFields.endField.field,
         ),
       },
     ];
+
+    if (!series[0].data || series[0].data.length === 0) {
+      return (
+        <div
+          style={{
+            padding: "24px",
+            textAlign: "center",
+            color: "#6b7280",
+            border: "1px dashed #d1d5db",
+            borderRadius: "8px",
+            backgroundColor: "#f9fafb",
+          }}
+        >
+          <p style={{ margin: 0, fontSize: "14px" }}>
+            Unable to render range bar chart: no valid range points found.
+          </p>
+        </div>
+      );
+    }
+  } else if (isRangeChart) {
+    return (
+      <div
+        style={{
+          padding: "24px",
+          textAlign: "center",
+          color: "#6b7280",
+          border: "1px dashed #d1d5db",
+          borderRadius: "8px",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          Unable to render range bar chart: missing start/end fields.
+        </p>
+      </div>
+    );
   } else {
     // Standard bar/column chart (supports stacked, multi-series)
     const categories = xField ? buildCategorySeriesLabels(data, xField) : [];
@@ -110,6 +229,7 @@ export default function BarChart({
 
     return (
       <Chart
+        key={chartId}
         type={apexType}
         width={config?.width ?? "100%"}
         height={config?.height ?? 350}
@@ -124,7 +244,7 @@ export default function BarChart({
     ...baseOptions,
     chart: {
       ...baseOptions.chart,
-      id: meta?.title || "range-bar-chart",
+      id: chartId,
     },
     plotOptions: {
       bar: {
@@ -133,7 +253,8 @@ export default function BarChart({
     },
     xaxis: {
       type:
-        startField?.unit === "datetime" || endField?.unit === "datetime"
+        resolvedRangeFields.startField?.unit === "datetime" ||
+        resolvedRangeFields.endField?.unit === "datetime"
           ? ("datetime" as const)
           : ("category" as const),
     },
@@ -141,6 +262,7 @@ export default function BarChart({
 
   return (
     <Chart
+      key={chartId}
       type={apexType}
       width={config?.width ?? "100%"}
       height={config?.height ?? 350}

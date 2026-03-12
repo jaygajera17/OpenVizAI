@@ -60,8 +60,28 @@ export function buildRangeBarPoints(
   startField: string,
   endField: string,
 ): Array<{ x: string; y: [number, number] }> {
-  return rows.map((row) => ({
-    x: toCategoryString(row[xField]),
-    y: [toMilliseconds(row[startField]), toMilliseconds(row[endField])],
-  }));
+  const toRangeValue = (value: unknown): number => {
+    const numeric = toFiniteNumber(value);
+    if (numeric !== null) return numeric;
+    return toMilliseconds(value);
+  };
+
+  return rows
+    .map((row) => {
+      const start = toRangeValue(row[startField]);
+      const end = toRangeValue(row[endField]);
+      const low = Math.min(start, end);
+      const high = Math.max(start, end);
+
+      return {
+        x: toCategoryString(row[xField]),
+        y: [low, high] as [number, number],
+      };
+    })
+    .filter(
+      (point) =>
+        Number.isFinite(point.y[0]) &&
+        Number.isFinite(point.y[1]) &&
+        point.x.length > 0,
+    );
 }
