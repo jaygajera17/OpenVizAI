@@ -1,195 +1,286 @@
 <div align="center">
 
-# 🧠 OpenVizAI
-### *Turn any data into the right chart — intelligently, instantly.*
+# OpenVizAI
 
-**The missing intelligence layer between your data pipeline and your visualization.**
-Prompt in. Beautiful chart out. Under 3,000 tokens. Every time.
+### Turn any dataset into the right chart — intelligently, instantly.
+
+The missing intelligence layer between your data pipeline and your visualization.
+
+Prompt in. Chart out. Under 3,000 tokens. Every time.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Charts: ApexCharts](https://img.shields.io/badge/Charts-ApexCharts-blue.svg)](https://apexcharts.com/)
-[![Status: Active](https://img.shields.io/badge/Status-Active%20Development-orange.svg)]()
 
 </div>
 
 ---
 
-## ✨ The Problem It Solves
+## The Problem
 
-You're building a **Text-to-SQL tool**. Or a data dashboard. Or an analytics pipeline.
+Every "AI + data" tool makes the same mistake: they treat the LLM like a database.
 
-You've solved the hard part — the query runs, the data comes back. But now you're stuck:
+Send 1,000 rows of JSON to a model and ask it to generate chart data? You get:
 
-> *"The user's prompt could be anything. The result schema could be anything. How do I know which chart to render — and how to configure it correctly?"*
+- **Context window overflow** on large datasets
+- **High token cost** — paying for data transformation the LLM shouldn't be doing
+- **Hallucinated structures** — invented fields, wrong aggregations
+- **Slow responses** — seconds of latency for work that deterministic code handles in milliseconds
 
-You could hardcode logic. You could ask users to pick a chart type. Or you could just let **OpenVizAI** figure it out.
+Most existing solutions follow this path:
 
-Pass in your data + a prompt. Get back a fully configured, rendered chart. No assumptions. No manual mapping. No wasted tokens.
+```
+Dataset → LLM transforms entire dataset → Chart
+```
 
----
-
-## 🎯 Who Is This For
-
-**OpenVizAI is the go-to connector for:**
-
-- 🏗️ **Text-to-SQL builders** — Your pipeline produces result sets. OpenVizAI turns them into the right visualization, automatically.
-- 📊 **Dashboard & BI developers** — Stop hardcoding chart types. Let the AI infer the best visual for any dataset shape.
-- 🔬 **Data app developers** — Users upload unknown data? OpenVizAI handles the visualization intelligence so you don't have to.
-- 🤖 **AI application builders** — Add a powerful, prompt-driven charting layer to any LLM-powered product.
-
-> **OpenVizAI is not a "chat with your data" tool.** It's a focused, single-purpose engine: *given data and intent, produce the correct chart.* That constraint is what makes it fast, cheap, and embeddable.
+That's expensive, unreliable, and doesn't scale.
 
 ---
 
-## 🚀 Core Capabilities
+## The Solution
 
-- **🤖 LLM-Powered Chart Intelligence** — Understands your data structure and user intent to select and configure the right chart automatically
-- **📊 Supported Chart Types** *(via ApexCharts)*
-  - Bar Chart
-  - Line Chart
-  - Area / Series Chart
-  - Pie Chart
-  - Donut Chart
-  - *(Actively expanding — targeting full ApexCharts coverage)*
-- **⚡ Minimal Token Usage** — Smart sampling means every generation stays under **3,000 tokens**, regardless of dataset size
-- **🕐 Session History** — All past chart generations are saved per session. Pick up any previous result instantly.
-- **🔌 Pipeline-Friendly** — Designed to sit as a layer inside existing data workflows, not replace them
+OpenVizAI takes a fundamentally different approach: **use the LLM for decisions, not data transformation.**
+
+```
+Dataset → Sample 2-3 rows → LLM decides chart type + field mapping → JS engine transforms full dataset → Chart
+```
+
+The LLM only sees a tiny sample of your data. It decides *what* to visualize (chart type, axes, series, grouping). Then deterministic JavaScript functions called **embedding functions** handle the actual data transformation across the full dataset.
+
+The result: correct charts from any dataset shape, under 3,000 tokens, every time.
 
 ---
 
-## 📸 Preview
+## Demo
 
-![OpenVizAI Screenshot](./assets/viz.png)
+### Single Chart Intelligence
 
-> *Prompt: "Plot a suitable chart" → OpenVizAI infers a grouped bar chart for Revenue, Expenses & Profit across months — zero manual config.*
+> Prompt: *"Plot a suitable chart for this data"* → OpenVizAI analyzes the schema, picks the optimal chart type, and renders it — zero manual configuration.
+
+<div align="center">
+<img src="./assets/chart.gif" alt="Single chart generation demo" width="720" />
+</div>
+
+### Multi-Chart Dashboard
+
+> Prompt: *"Generate a dashboard"* → OpenVizAI creates multiple complementary charts from the same dataset, each showing a different analytical perspective.
+
+<div align="center">
+<img src="./assets/dashboard.gif" alt="Dashboard generation demo" width="720" />
+</div>
 
 ---
 
-## 🔢 Performance & Token Cost Matrix
+## How It Works
 
-| Dataset Size | Data Sent to LLM | Avg Tokens Used | Estimated Cost (GPT-4o) |
+> **Your Data** (any size)
+> → **Smart Sampler** (2–3 rows)
+> → **LLM** decides chart type, axes, series, labels
+> → **Embedding Functions** (JS) transform the full dataset
+> → **ApexCharts** renders the final chart
+
+**Key insight:** The LLM never sees your full dataset. It receives a small sample and returns a metadata object called an **embedding** — a declarative description of how to map fields to axes, series, and categories. Deterministic code does the rest.
+
+Example LLM output:
+
+```json
+{
+  "chart_type": "bar",
+  "embedding": {
+    "x": [{ "field": "month", "label": "Month" }],
+    "y": [{ "field": "revenue", "label": "Revenue" }]
+  },
+  "meta": {
+    "title": "Monthly Revenue",
+    "subtitle": "Jan – Dec 2025"
+  }
+}
+```
+
+This metadata is all the rendering layer needs. The embedding functions take this plus the original dataset and produce the final chart — no matter if the dataset has 100 or 500,000 rows.
+
+---
+
+## Token Cost
+
+| Dataset Size | Data Sent to LLM | Avg Tokens | Est. Cost (GPT-4o) |
 |---|---|---|---|
-| 1K rows | Sampled | ~2,800 | ~$0.002 |
-| 50K rows | Sampled | ~2,900 | ~$0.003 |
-| 500K rows | Sampled | ~3,000 | ~$0.004 |
-| **Any size** | Sampled | **< 3,000** | **< $0.005** |
+| 1K rows | 2-3 sampled rows | ~3,000 | ~$0.0004 |
+| 50K rows | 2-3 sampled rows | ~3,000 | ~$0.0004 |
+| 500K rows | 2-3 sampled rows | ~3,000 | ~$0.0004 |
+| **Any size** | **Sampled** | **< 3,000** | **< $0.005** |
 
 > Token counts include system prompt, data sample, user intent, and full chart config response.
-> Costs vary by model and provider. Samples are statistically representative — chart quality doesn't degrade at scale.
+> Sampling is statistically representative — chart quality doesn't degrade at scale.
 
 ---
 
-## 🛠️ Getting Started
+## How OpenVizAI Is Different
+
+Most AI visualization tools follow a pipeline like this:
+
+| | Typical AI Viz Tool | OpenVizAI |
+|---|---|---|
+| **What LLM does** | Transforms the entire dataset into chart structures | Decides chart type + field mappings only |
+| **Data sent to LLM** | Full dataset (or large chunks) | 2-3 sampled rows |
+| **Data transformation** | LLM-generated (unreliable at scale) | Deterministic JS functions |
+| **Token usage** | Scales with dataset size | Constant (~3K tokens) |
+| **Visualization quality** | Data-science style (matplotlib, plotly) | Production dashboard charts (ApexCharts) |
+| **Rendering** | Server-side or notebook | Client-side, embeddable React components |
+
+**Compared to tools like Vanna.ai:**
+
+Vanna's pipeline: `User Question → LLM → SQL → Database → Pandas DataFrame → Rule-based visualization`
+
+Their visualization step uses heuristics: *if categorical + numeric → bar chart, if time series → line chart, if percentage → pie chart.* It works for notebooks, but produces data-science-oriented visuals — not interactive, dashboard-grade charts.
+
+**OpenVizAI's pipeline:** `Dataset → LLM decides visualization strategy → JS engine transforms data → ApexCharts renderer`
+
+The LLM doesn't just match patterns — it understands user intent. Ask for *"show me workforce utilization trends"* and it picks a line chart with the right axes. Ask for *"compare departments"* from the same data and it picks a grouped bar chart. Same dataset, different insight, different chart — driven by reasoning, not rules.
+
+---
+
+## Use Cases
+
+### Drop-in visualization for Text-to-SQL
+
+Your SQL pipeline returns a JSON result set. You don't know the schema ahead of time. Pass it to OpenVizAI with the original user prompt — get back a fully configured chart.
+
+```
+Text-to-SQL → Query result (JSON) → OpenVizAI → Interactive chart
+```
+
+### AI-powered dashboards
+
+Feed a dataset and let OpenVizAI generate a multi-chart dashboard. Each chart covers a different analytical dimension of the same data — trends, comparisons, distributions — without any manual configuration.
+
+### Visualization layer for analytics platforms
+
+OpenVizAI is designed to be embedded. The core intelligence (`@openvizai/core`) runs server-side to decide chart configurations. The React renderer (`@openvizai/react`) renders them client-side. Wire them into any existing product.
+
+---
+
+## Packages
+
+| Package | Description |
+|---|---|
+| [`@openvizai/core`](https://www.npmjs.com/package/@openvizai/core) | Chart intelligence engine — analyzes datasets, calls LLM, returns chart metadata |
+| [`@openvizai/react`](https://www.npmjs.com/package/@openvizai/react) | React components — renders charts from metadata + dataset using ApexCharts |
+| `@openvizai/shared-types` | Shared TypeScript types and constants across packages |
+
+### Quick Install
 
 ```bash
-# Clone the repo
+# Intelligence layer (server-side)
+npm install @openvizai/core
+
+# React renderer (client-side)
+npm install @openvizai/react
+```
+
+### Basic Usage
+
+**Server-side** — analyze a dataset:
+
+```ts
+import { analyzeChart } from "@openvizai/core";
+
+const result = await analyzeChart({
+  prompt: "Show revenue trends over time",
+  data: myDataset,
+  config: { provider: "google-genai", apiKey: process.env.GEMINI_API_KEY },
+});
+
+// result.result → { chart_type, embedding, meta }
+```
+
+**Client-side** — render the chart:
+
+```tsx
+import { OpenVizRenderer } from "@openvizai/react";
+
+<OpenVizRenderer
+  data={dataset}
+  chartType={result.chart_type}
+  embedding={result.embedding}
+  meta={result.meta}
+/>
+```
+
+---
+
+## Playground Demo
+
+The repo includes a full-stack playground application so you can try OpenVizAI immediately.
+
+**See the [Playground Setup Guide](docs/PLAYGROUND.md) for step-by-step instructions.**
+
+Quick summary:
+
+```bash
 git clone https://github.com/jaygajera17/OpenVizAI.git
 cd OpenVizAI
-
-# Install dependencies
 npm install
-
-# Add your LLM API key
-cp .env.example .env
-# Edit .env → OPENAI_API_KEY=your_key_here
-
-# Run
+# Configure .env (Gemini API key + PostgreSQL)
+npx prisma db push
 npm run dev
 ```
 
-Open `http://localhost:3000`, paste your JSON data, describe what you want, and hit **Generate Chart**.
+The playground features built-in example datasets so you can start generating charts immediately — no data preparation needed.
 
 ---
 
-## 💡 Real-World Use Case
+## Roadmap
 
-**Scenario:** You're building a Text-to-SQL product. A user types:
+### Near-Term
+- [ ] Full ApexCharts chart type coverage (heatmap, scatter, candlestick, treemap, etc.)
+- [ ] Improved sampling strategies for highly skewed and sparse datasets
 
-> *"Show me monthly revenue vs expenses for Q1"*
+### Mid-Term
+- [ ] **VizEngine abstraction** — pluggable renderer interface to target Chart.js, Recharts, or D3 from the same config
+- [ ] **Data insights** — surface trends, anomalies, and statistical summaries from datasets without additional LLM calls
+- [ ] **Multi-LLM support** — OpenAI, Anthropic Claude, Gemini, and local models
 
-Your backend runs the query. The result is a JSON array with unknown column names, mixed numeric types, and a date field. You have no idea what chart to render.
-
-You pass the result + the original user prompt to **OpenVizAI**.
-
-It returns a fully configured ApexCharts grouped bar chart — correct series, correct axes, correct labels. Rendered. Done.
-
-That's the integration point OpenVizAI is built for.
-
----
-
-## 🗺️ Roadmap
-
-### 🔜 Near-Term
-- [ ] Full ApexCharts chart type coverage (heatmap, radar, scatter, candlestick, etc.)
-- [ ] REST API / embeddable component for easier pipeline integration
-- [ ] Improved sampling strategies for highly skewed datasets
-
-### 🧱 Mid-Term
-- [ ] **Library-Level Package** — `npm install openvizai` to drop the intelligence layer into any project
-- [ ] **VizEngine Abstraction** — A pluggable renderer interface so OpenVizAI can target ApexCharts, Chart.js, Recharts, or D3 from a single config standard. One prompt. Any chart library.
-- [ ] **Multi-LLM Support** — OpenAI, Anthropic Claude, Gemini, and local model support
-
-### 🔮 Future Vision
-- [ ] **Client-Side Insight Generation** — Surface trends and anomalies from data *without* sending it to an LLM, using [danfo.js](https://danfo.jsdata.org/) DataFrame operations. Intelligence at zero extra token cost.
-- [ ] **Prompt-Driven Theming** — *"Use our brand colors"* or *"dark mode, cyberpunk aesthetic"* — LLM-generated color palettes and chart styles from plain language
-- [ ] **Config Export** — Export the generated ApexCharts config as reusable JSON or component code
+### Future
+- [ ] **Prompt-driven theming** — *"Use our brand colors"* or *"dark mode"* applied via natural language
+- [ ] **Config export** — export generated chart configs as reusable JSON or component code
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-OpenVizAI is actively growing and contributions are very welcome!
+Contributions are welcome.
 
-### How to Contribute
+### Quick Start
 
-1. **Fork** the repository
-2. **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/OpenVizAI.git`
-3. **Create a branch**: `git checkout -b feature/your-feature-name`
-4. **Make your changes** with clear, focused commits
-5. **Push** and open a **Pull Request** against `main`
+1. Fork the repository
+2. `git clone https://github.com/YOUR_USERNAME/OpenVizAI.git`
+3. `git checkout -b feature/your-feature-name`
+4. Make focused changes with clear commits
+5. Open a Pull Request against `main`
 
-### Great First Contributions
+### Good First Issues
 
 | Area | What's Needed |
 |---|---|
-| 📊 New Chart Types | Help expand ApexCharts coverage |
-| 🧪 Tests | Unit and integration tests |
-| 📖 Docs & Examples | Real-world integration examples |
-| 🎨 UI Polish | Cleaner interface and UX improvements |
-| ⚙️ VizEngine Design | Architectural input on the multi-library abstraction |
+| New Chart Types | Expand ApexCharts coverage 
+| Examples | Real-world integration examples (Next.js, Text-to-SQL, etc.) |
+| Documentation | Improve API docs and usage guides |
 
-### Guidelines
+### Reporting Bugs
 
-- One feature or fix per PR — keep it focused
-- For large features, **open an issue first** to align before building
-- Include a short description of *what* and *why* in your PR
-- Follow existing code style and naming conventions
-
-### Reporting Issues
-
-[Open an issue](https://github.com/jaygajera17/OpenVizAI/issues) with:
-- Clear title and description
-- Steps to reproduce (for bugs)
-- Sample data + prompt that triggered the issue (if relevant)
+[Open an issue](https://github.com/jaygajera17/OpenVizAI/issues) with a clear description, steps to reproduce, and sample data + prompt if relevant.
 
 ---
 
-## 🧠 The Philosophy
+## License
 
-Every "AI + data" tool makes the same mistake: they treat the LLM like a database and dump everything into the context window.
-
-OpenVizAI treats the LLM as what it is — **a reasoning engine**. Your data stays local. The model gets just enough context to understand the shape of your data and the intent of your prompt. Then it hands back a chart configuration. Precise. Cheap. Fast.
-
-This is especially important for pipeline builders: your users don't care how the chart gets made. They just want the right chart, rendered correctly, the first time. That's the only job OpenVizAI has — and it does it well.
+[MIT](LICENSE)
 
 ---
-
-
 
 <div align="center">
 
-**If OpenVizAI fills a gap in your stack, ⭐ the repo — it helps others find it.**
+**If OpenVizAI fills a gap in your stack, star the repo — it helps others find it.**
 
 *Built for developers who are done hardcoding chart types.*
 
