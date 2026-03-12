@@ -43,6 +43,46 @@ export function validateEmbeddingConsistency(result: ChartResult): ChartResult {
     embedding.y = null;
   } else if (chart_type === "range_bar") {
     // range_bar needs x, start, end
+    // Recovery path: if start/end are missing but y has at least 2 fields,
+    // map y[0] -> start and y[1] -> end.
+    if (
+      (!embedding.start || embedding.start.length === 0) &&
+      (!embedding.end || embedding.end.length === 0) &&
+      embedding.y &&
+      embedding.y.length >= 2
+    ) {
+      embedding.start = [
+        {
+          field: embedding.y[0].field,
+          label: embedding.y[0].label,
+          unit: embedding.y[0].unit,
+        },
+      ];
+      embedding.end = [
+        {
+          field: embedding.y[1].field,
+          label: embedding.y[1].label,
+          unit: embedding.y[1].unit,
+        },
+      ];
+    }
+
+    // Recovery path: if x is missing but category exists, reuse category as x.
+    if (
+      (!embedding.x || embedding.x.length === 0) &&
+      embedding.category &&
+      embedding.category.length > 0
+    ) {
+      embedding.x = [
+        {
+          field: embedding.category[0].field,
+          label: embedding.category[0].label,
+          unit: embedding.category[0].unit,
+        },
+      ];
+    }
+
+    embedding.is_horizontal = true;
     embedding.y = null;
     embedding.category = null;
     embedding.value = null;
