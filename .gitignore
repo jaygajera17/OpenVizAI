@@ -8,3 +8,4 @@ logs/
 /generated/prisma
 generated/
 .vscode/
+docs/information.md

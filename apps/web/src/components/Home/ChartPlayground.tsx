@@ -19,6 +19,18 @@ interface Props {
   error?: string;
 }
 
+const isArrayOfObjects = (
+  value: unknown,
+): value is Record<string, unknown>[] => {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        item !== null && typeof item === "object" && !Array.isArray(item),
+    )
+  );
+};
+
 export default function ChartPlayground({ onGenerate, loading, error }: Props) {
   const [dataError, setDataError] = useState("");
   const [chartDropdownOpen, setChartDropdownOpen] = useState(false);
@@ -60,6 +72,33 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
     setDataError("");
   };
 
+  const handleJsonUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setDataError("");
+
+    try {
+      const content = await file.text();
+      const parsed = JSON.parse(content);
+
+      if (!isArrayOfObjects(parsed)) {
+        setDataError("Uploaded JSON must be an array of objects");
+        return;
+      }
+
+      setRows(parsed);
+      setDataInput(JSON.stringify(parsed, null, 2));
+    } catch {
+      setDataError("Invalid JSON file. Please upload a valid .json file");
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setDataError("");
@@ -69,6 +108,12 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
 
     try {
       const parsedData = JSON.parse(dataInput);
+
+      if (!isArrayOfObjects(parsedData)) {
+        setDataError("Data must be a JSON array of objects");
+        return;
+      }
+
       setRows(parsedData);
 
       onGenerate({
@@ -143,6 +188,15 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
 
             <div className="mb-3">
               <label className="form-label composer-label">Data (JSON)</label>
+              <div className="d-flex gap-2 align-items-center flex-wrap mb-2">
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="form-control composer-input"
+                  onChange={handleJsonUpload}
+                />
+               
+              </div>
               <textarea
                 className="form-control font-monospace composer-input composer-json"
                 rows={4}
