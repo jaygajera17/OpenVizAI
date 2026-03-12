@@ -1,4 +1,5 @@
 import type { EmbeddingAxisField, GraphicalMeta } from "./lineChartExamples";
+import type { ChartType } from "@openvizai/shared-types";
 
 export type BarChartEmbedding = {
   x: EmbeddingAxisField[];
@@ -14,7 +15,7 @@ export type BarChartEmbedding = {
 
 export type BarGraphicalChart = {
   // 'bar' covers both bar and column; 'range_bar' maps to Apex 'rangeBar'
-  chart_type: "bar" | "range_bar";
+  chart_type: Extract<ChartType, "bar" | "range_bar">;
   embedding: BarChartEmbedding;
 };
 
@@ -229,4 +230,3 @@ export const allBarChartVariants: BarChartVariant[] = [
   stackedRevenueChannelVariant,
   projectTimelineRangeBarVariant,
 ];
-

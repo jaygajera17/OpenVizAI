@@ -1,0 +1,75 @@
+import OpenVizRenderer from "./OpenVizRenderer";
+import type { OpenVizDashboardProps } from "./types/dashboard";
+
+/**
+ * Renders multiple charts in a responsive grid.
+ * Each chart is an independent OpenVizRenderer with its own embedding + meta.
+ */
+export default function OpenVizDashboard({
+  data,
+  charts,
+  config,
+  columns = 2,
+  className,
+}: OpenVizDashboardProps) {
+  if (!charts || charts.length === 0) {
+    return (
+      <div
+        style={{
+          padding: "24px",
+          textAlign: "center",
+          color: "#6b7280",
+          border: "1px dashed #d1d5db",
+          borderRadius: "8px",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: "14px" }}>
+          No charts to display.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={className}
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gap: "16px",
+        width: "100%",
+      }}
+    >
+      {charts.map((chart, index) => (
+        <div
+          key={`${chart.chart_type}-${index}`}
+          style={{
+            border: "1px solid #e5e7eb",
+            borderRadius: "8px",
+            padding: "16px",
+            backgroundColor: "#ffffff",
+          }}
+        >
+          <div style={{ marginBottom: "8px" }}>
+            <h4 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: 600 }}>
+              {chart.meta.title}
+            </h4>
+            {chart.meta.query_explanation && (
+              <p style={{ margin: 0, fontSize: "12px", color: "#6b7280" }}>
+                {chart.meta.query_explanation}
+              </p>
+            )}
+          </div>
+          <OpenVizRenderer
+            data={data}
+            chartType={chart.chart_type}
+            embedding={chart.embedding}
+            meta={chart.meta}
+            config={config}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}

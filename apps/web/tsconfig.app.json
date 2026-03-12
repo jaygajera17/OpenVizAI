@@ -22,7 +22,11 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "paths": {
+      "@openvizai/shared-types": ["../../packages/shared-types/src"],
+      "@openvizai/react": ["../../packages/react/src"]
+    }
   },
   "include": ["src"]
 }
