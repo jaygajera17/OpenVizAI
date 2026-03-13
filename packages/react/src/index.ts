@@ -1,18 +1,18 @@
 // Main component
-export { default as OpenVizRenderer } from "./OpenVizRenderer";
+export { default as OpenVizRenderer } from "./OpenVizRenderer.js";
 
 // Dashboard component
-export { default as OpenVizDashboard } from "./OpenVizDashboard";
+export { default as OpenVizDashboard } from "./OpenVizDashboard.js";
 
 // Chart registry (for plugin system)
 export {
   registerChart,
   getChartComponent,
   resetChartRegistry,
-} from "./charts/registry";
+} from "./charts/registry.js";
 
 // Individual chart components (for advanced usage)
-export { LineChart, BarChart, PieChart, RadarChart } from "./charts";
+export { LineChart, BarChart, PieChart, RadarChart } from "./charts/index.js";
 
 // Types
 export type {
@@ -23,10 +23,10 @@ export type {
   OpenVizRendererProps,
   DashboardChartItem,
   OpenVizDashboardProps,
-} from "./types";
+} from "./types/index.js";
 
 // Internal chart component props type (for custom chart registration)
-export type { ChartComponentProps } from "./charts/types";
+export type { ChartComponentProps } from "./charts/types.js";
 
 // Re-export chart type constants
 export { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";

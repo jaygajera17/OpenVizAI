@@ -4,10 +4,24 @@ import {
   EmbeddingFieldSchema,
   EmbeddingFieldTypeSchema,
   EmbeddingSchema,
-} from "../types/embedding";
+} from "../types/embedding.js";
 
 export { EmbeddingFieldSchema, EmbeddingFieldTypeSchema, EmbeddingSchema };
 
+/**
+ * Zod schema that validates the full LLM response for a single chart.
+ *
+ * Use this to validate or type-narrow raw JSON from an LLM before
+ * passing it through the rest of the pipeline.
+ *
+ * @example
+ * ```ts
+ * import { responseFormatterSchema } from "@openvizai/core";
+ *
+ * const parsed = responseFormatterSchema.parse(llmJson);
+ * // parsed is fully typed as { response_type, meta, chart }
+ * ```
+ */
 export const responseFormatterSchema = z.object({
   response_type: z.literal("graphical"),
   meta: z.object({

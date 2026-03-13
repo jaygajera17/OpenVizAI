@@ -4,14 +4,14 @@ import {
   SystemMessage,
   type BaseMessage,
 } from "@langchain/core/messages";
-import { responseFormatterPrompt } from "../prompts/responseFormatterPrompt";
-import { responseFormatterSchema } from "../config/zodSchemas";
-import { LLMError } from "../errors/index";
-import type { ResolvedConfig } from "../config/defaults";
-import type { ChartResult } from "../types/chart";
-import type { SchemaInfo } from "../analysis/schemaInspector";
+import { responseFormatterPrompt } from "../prompts/responseFormatterPrompt.js";
+import { responseFormatterSchema } from "../config/zodSchemas.js";
+import { LLMError } from "../errors/index.js";
+import type { ResolvedConfig } from "../config/defaults.js";
+import type { ChartResult } from "../types/chart.js";
+import type { SchemaInfo } from "../analysis/schemaInspector.js";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { responseFormatterSchemaRaw } from "../config/JsonSchemas";
+import { responseFormatterSchemaRaw } from "../config/JsonSchemas.js";
 
 export interface GenerateEmbeddingOptions {
   prompt: string;

@@ -1,10 +1,20 @@
-import type { ChartResult } from "../types/chart";
-import type { ChartEmbedding } from "../types/embedding";
+import type { ChartResult } from "../types/chart.js";
+import type { ChartEmbedding } from "../types/embedding.js";
 
 /**
- * Post-LLM validation: ensure chart_type matches the filled embedding fields.
- * If inconsistent, attempt to fix by nullifying wrong fields and filling correct ones.
- * Returns the (possibly corrected) ChartResult.
+ * Post-LLM validation: ensure `chart_type` matches the filled embedding fields.
+ *
+ * If the LLM placed fields in the wrong slots (e.g. `x/y` for a pie chart
+ * instead of `category/value`), this function attempts automatic recovery.
+ *
+ * @param result - The raw `ChartResult` from the LLM.
+ * @returns The validated (and possibly corrected) `ChartResult`.
+ *
+ * @example
+ * ```ts
+ * const fixed = validateEmbeddingConsistency(rawResult);
+ * // fixed.chart.embedding is now consistent with fixed.chart.chart_type
+ * ```
  */
 export function validateEmbeddingConsistency(result: ChartResult): ChartResult {
   const { chart_type } = result.chart;

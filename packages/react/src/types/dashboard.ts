@@ -1,5 +1,5 @@
 import type { ChartType } from "@openvizai/shared-types";
-import type { ChartEmbedding, ChartMeta, OpenVizConfig } from "./renderer";
+import type { ChartEmbedding, ChartMeta, OpenVizConfig } from "./renderer.js";
 
 /** A single chart item for the dashboard */
 export type DashboardChartItem = {

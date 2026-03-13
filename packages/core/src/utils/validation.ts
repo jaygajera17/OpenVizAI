@@ -1,5 +1,5 @@
-import type { AnalyzeChartInput } from "../types/api";
-import { InvalidInputError } from "../errors/index";
+import type { AnalyzeChartInput } from "../types/api.js";
+import { InvalidInputError } from "../errors/index.js";
 
 /**
  * Validate the input to `analyzeChart`.

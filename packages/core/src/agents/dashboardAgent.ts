@@ -1,14 +1,14 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { dashboardPlannerPrompt } from "../prompts/dashboardPlannerPrompt";
-import { dashboardResponseSchema } from "../config/dashboardSchema";
-import { LLMError } from "../errors/index";
-import type { ResolvedConfig } from "../config/defaults";
-import type { DashboardChartItem } from "../types/dashboard";
-import type { SchemaInfo } from "../analysis/schemaInspector";
+import { dashboardPlannerPrompt } from "../prompts/dashboardPlannerPrompt.js";
+import { dashboardResponseSchema } from "../config/dashboardSchema.js";
+import { LLMError } from "../errors/index.js";
+import type { ResolvedConfig } from "../config/defaults.js";
+import type { DashboardChartItem } from "../types/dashboard.js";
+import type { SchemaInfo } from "../analysis/schemaInspector.js";
 import type { ChartType } from "@openvizai/shared-types";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { dashboardResponseSchemaRaw } from "../config/JsonSchemas";
+import { dashboardResponseSchemaRaw } from "../config/JsonSchemas.js";
 
 export interface GenerateDashboardEmbeddingsOptions {
   prompt: string;

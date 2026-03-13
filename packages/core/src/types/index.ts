@@ -1,18 +1,18 @@
-export type { ChartMeta, ChartResult, ChartType } from "./chart";
+export type { ChartMeta, ChartResult, ChartType } from "./chart.js";
 export type {
   AnalyzeChartConfig,
   AnalyzeChartInput,
   AnalyzeChartResult,
-} from "./api";
+} from "./api.js";
 export type {
   EmbeddingField,
   EmbeddingFieldWithType,
   ChartEmbedding,
-} from "./embedding";
+} from "./embedding.js";
 
 export type {
   DashboardChartItem,
   DashboardResult,
   AnalyzeDashboardInput,
   AnalyzeDashboardResult,
-} from "./dashboard";
+} from "./dashboard.js";
