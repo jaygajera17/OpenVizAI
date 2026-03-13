@@ -13,6 +13,20 @@ Prompt and data in. Chart out. Under 3,000 tokens. Every time.
 
 </div>
 
+## Packages
+
+### Quick Install
+
+```bash
+npm install @openvizai/core @openvizai/react @openvizai/shared-types
+```
+
+
+| Package                                                                            | Description                                                                      |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [`@openvizai/core`](https://www.npmjs.com/package/@openvizai/core)                 | Chart intelligence engine — analyzes datasets, calls LLM, returns chart metadata |
+| [`@openvizai/react`](https://www.npmjs.com/package/@openvizai/react)               | React components — renders charts from metadata + dataset using ApexCharts       |
+| [`@openvizai/shared-types`](https://www.npmjs.com/package/@openvizai/shared-types) | Shared TypeScript types and constants across packages                            |
 
 
 ## The Problem
@@ -49,24 +63,11 @@ The LLM only sees a tiny sample of your data. It decides _what_ to visualize (ch
 The result: correct charts from any dataset shape, under 3,000 tokens, every time.
 
 <div align="center">
-<img src="./assets/architecture.png" alt="Architecture" width="720" />
+<img src="./assets/architecture.png" alt="Architecture" width="450" />
 </div>
 
 ---
 
-## Packages
-
-| Package                                                                            | Description                                                                      |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [`@openvizai/core`](https://www.npmjs.com/package/@openvizai/core)                 | Chart intelligence engine — analyzes datasets, calls LLM, returns chart metadata |
-| [`@openvizai/react`](https://www.npmjs.com/package/@openvizai/react)               | React components — renders charts from metadata + dataset using ApexCharts       |
-| [`@openvizai/shared-types`](https://www.npmjs.com/package/@openvizai/shared-types) | Shared TypeScript types and constants across packages                            |
-
-### Quick Install
-
-```bash
-npm install @openvizai/core @openvizai/react @openvizai/shared-types
-```
 
 ## Demo
 
