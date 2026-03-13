@@ -1,6 +1,6 @@
 import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
 import type { ChartType } from "@openvizai/shared-types";
-import type { SchemaInfo } from "../analysis/schemaInspector";
+import type { SchemaInfo } from "../analysis/schemaInspector.js";
 
 function formatSchemaHints(schema?: SchemaInfo): string {
   if (!schema || schema.columns.length === 0) return "";

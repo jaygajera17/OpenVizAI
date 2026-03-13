@@ -1,4 +1,4 @@
-import type { AnalyzeChartConfig } from "../types/api";
+import type { AnalyzeChartConfig } from "../types/api.js";
 
 export interface ResolvedConfig {
   provider: "openai" | "google";

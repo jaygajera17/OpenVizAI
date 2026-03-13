@@ -4,9 +4,6 @@ export type {
   ChartMeta,
   OpenVizConfig,
   OpenVizRendererProps,
-} from "./renderer";
+} from "./renderer.js";
 
-export type {
-  DashboardChartItem,
-  OpenVizDashboardProps,
-} from "./dashboard";
+export type { DashboardChartItem, OpenVizDashboardProps } from "./dashboard.js";

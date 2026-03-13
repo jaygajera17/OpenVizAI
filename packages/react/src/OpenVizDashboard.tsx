@@ -1,9 +1,24 @@
-import OpenVizRenderer from "./OpenVizRenderer";
-import type { OpenVizDashboardProps } from "./types/dashboard";
+import OpenVizRenderer from "./OpenVizRenderer.js";
+import type { OpenVizDashboardProps } from "./types/dashboard.js";
 
 /**
- * Renders multiple charts in a responsive grid.
- * Each chart is an independent OpenVizRenderer with its own embedding + meta.
+ * Renders multiple charts in a responsive grid layout.
+ *
+ * Accepts the output of `analyzeDashboard()` and renders each chart
+ * as an independent `<OpenVizRenderer />` with its own embedding + meta.
+ *
+ * @param props - Data, chart configs, and optional grid/layout settings.
+ *
+ * @example
+ * ```tsx
+ * import { OpenVizDashboard } from "@openvizai/react";
+ *
+ * <OpenVizDashboard
+ *   data={rows}
+ *   charts={result.charts}
+ *   columns={2}
+ * />
+ * ```
  */
 export default function OpenVizDashboard({
   data,
@@ -24,9 +39,7 @@ export default function OpenVizDashboard({
           backgroundColor: "#f9fafb",
         }}
       >
-        <p style={{ margin: 0, fontSize: "14px" }}>
-          No charts to display.
-        </p>
+        <p style={{ margin: 0, fontSize: "14px" }}>No charts to display.</p>
       </div>
     );
   }
@@ -52,7 +65,9 @@ export default function OpenVizDashboard({
           }}
         >
           <div style={{ marginBottom: "8px" }}>
-            <h4 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: 600 }}>
+            <h4
+              style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: 600 }}
+            >
               {chart.meta.title}
             </h4>
             {chart.meta.query_explanation && (

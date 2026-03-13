@@ -1,5 +1,5 @@
-import { getChartComponent } from "./charts/registry";
-import type { OpenVizRendererProps } from "./types/renderer";
+import { getChartComponent } from "./charts/registry.js";
+import type { OpenVizRendererProps } from "./types/renderer.js";
 
 function ChartError({ message }: { message: string }) {
   return (
@@ -18,6 +18,26 @@ function ChartError({ message }: { message: string }) {
   );
 }
 
+/**
+ * Renders a single chart from OpenVizAI embedding metadata.
+ *
+ * Accepts the output of `analyzeChart()` and visualizes it using ApexCharts.
+ * Supports bar, line, pie, donut, radar, and range bar charts out of the box.
+ *
+ * @param props - Chart data, type, embedding, and optional config.
+ *
+ * @example
+ * ```tsx
+ * import { OpenVizRenderer } from "@openvizai/react";
+ *
+ * <OpenVizRenderer
+ *   data={rows}
+ *   chartType={result.chart.chart_type}
+ *   embedding={result.chart.embedding}
+ *   meta={result.meta}
+ * />
+ * ```
+ */
 export default function OpenVizRenderer({
   data,
   chartType,
