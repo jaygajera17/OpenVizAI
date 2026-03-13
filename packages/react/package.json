@@ -1,6 +1,29 @@
 {
   "name": "@openvizai/react",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "description": "React renderer components for OpenVizAI chart metadata powered by ApexCharts.",
+  "license": "MIT",
+  "author": "Jay Gajera",
+  "homepage": "https://github.com/OpenVizAI/OpenVizAI#readme",
+  "bugs": {
+    "url": "https://github.com/OpenVizAI/OpenVizAI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenVizAI/OpenVizAI.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "openvizai",
+    "react",
+    "charts",
+    "visualization",
+    "apexcharts",
+    "dashboard",
+    "typescript",
+    "gen-ai-charts",
+    "generative-charts"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,7 +46,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@openvizai/shared-types": "^0.1.0"
+    "@openvizai/shared-types": "^0.1.1"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

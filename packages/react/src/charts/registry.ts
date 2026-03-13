@@ -1,10 +1,10 @@
 import type { ComponentType } from "react";
-import type { ChartComponentProps } from "./types";
+import type { ChartComponentProps } from "./types.js";
 
-import LineChart from "./LineChart";
-import BarChart from "./BarChart";
-import PieChart from "./PieChart";
-import RadarChart from "./RadarChart";
+import LineChart from "./LineChart.js";
+import BarChart from "./BarChart.js";
+import PieChart from "./PieChart.js";
+import RadarChart from "./RadarChart.js";
 
 type ChartRegistry = Record<string, ComponentType<ChartComponentProps>>;
 
@@ -19,7 +19,23 @@ const defaultRegistry: ChartRegistry = {
 
 let registry: ChartRegistry = { ...defaultRegistry };
 
-/** Register a custom chart component for a chart type */
+/**
+ * Register a custom chart component for a given chart type.
+ *
+ * Use this to extend the built-in chart registry with your own
+ * chart components (e.g. a custom heatmap or treemap).
+ *
+ * @param chartType - The chart type key (e.g. `"heatmap"`).
+ * @param component - The React component to render for that type.
+ *
+ * @example
+ * ```tsx
+ * import { registerChart } from "@openvizai/react";
+ * import MyHeatmap from "./MyHeatmap";
+ *
+ * registerChart("heatmap", MyHeatmap);
+ * ```
+ */
 export function registerChart(
   chartType: string,
   component: ComponentType<ChartComponentProps>,
@@ -27,14 +43,25 @@ export function registerChart(
   registry[chartType] = component;
 }
 
-/** Get the component for a chart type. Returns undefined if not registered. */
+/**
+ * Get the registered React component for a chart type.
+ *
+ * Returns `undefined` if no component is registered for the given type.
+ *
+ * @param chartType - The chart type key to look up.
+ * @returns The registered component, or `undefined`.
+ */
 export function getChartComponent(
   chartType: string,
 ): ComponentType<ChartComponentProps> | undefined {
   return registry[chartType];
 }
 
-/** Reset registry to defaults (useful for testing) */
+/**
+ * Reset the chart registry to the built-in defaults.
+ *
+ * Useful in tests to restore the original registry after custom registrations.
+ */
 export function resetChartRegistry(): void {
   registry = { ...defaultRegistry };
 }

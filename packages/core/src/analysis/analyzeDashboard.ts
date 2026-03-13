@@ -2,20 +2,43 @@ import type {
   AnalyzeDashboardInput,
   AnalyzeDashboardResult,
   DashboardChartItem,
-} from "../types/dashboard";
-import { resolveConfig } from "../config/defaults";
-import { sampleDataset } from "./datasetSampler";
-import { formatData } from "../utils/formatData";
-import { validateInput } from "../utils/validation";
-import { inspectSchema } from "./schemaInspector";
-import { validateEmbeddingConsistency } from "../utils/embeddingValidator";
-import { generateDashboardEmbeddings } from "../agents/dashboardAgent";
+} from "../types/dashboard.js";
+import { resolveConfig } from "../config/defaults.js";
+import { sampleDataset } from "./datasetSampler.js";
+import { formatData } from "../utils/formatData.js";
+import { validateInput } from "../utils/validation.js";
+import { inspectSchema } from "./schemaInspector.js";
+import { validateEmbeddingConsistency } from "../utils/embeddingValidator.js";
+import { generateDashboardEmbeddings } from "../agents/dashboardAgent.js";
 
 /**
- * Dashboard entry point for OpenVizAI core.
+ * Analyze a user prompt and dataset to produce multiple chart recommendations for a dashboard.
  *
- * Takes a user prompt and dataset, returns multiple chart type + embedding pairs.
- * Separate from analyzeChart — existing logic is untouched.
+ * Returns an array of chart items, each with its own chart type, embedding, and metadata.
+ * Uses a single LLM call to generate all charts at once.
+ *
+ * @param input - The prompt, dataset rows, optional LLM config, and dashboard constraints.
+ * @returns A promise that resolves to `{ result, sampleUsed }` where `result.charts` is the array.
+ *
+ * @example
+ * ```ts
+ * import { analyzeDashboard } from "@openvizai/core";
+ *
+ * const { result } = await analyzeDashboard({
+ *   prompt: "give me a full overview of energy usage",
+ *   data: rows,
+ *   config: { provider: "google", apiKey: process.env.GEMINI_API_KEY },
+ *   maxCharts: 4,
+ * });
+ *
+ * result.charts.forEach(chart => {
+ *   console.log(chart.chart_type, chart.meta.title);
+ * });
+ * ```
+ *
+ * @throws {InvalidInputError} If `prompt` or `data` is missing/invalid.
+ * @throws {LLMError} If the LLM call fails or returns unparseable output.
+ * @throws {ConfigError} If the provider config is invalid.
  */
 export async function analyzeDashboard(
   input: AnalyzeDashboardInput,

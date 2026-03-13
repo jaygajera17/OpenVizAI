@@ -1,11 +1,11 @@
 import Chart from "react-apexcharts";
-import type { ChartComponentProps } from "./types";
-import { buildApexBaseOptions } from "../embedding/apexBaseOptions";
+import type { ChartComponentProps } from "./types.js";
+import { buildApexBaseOptions } from "../embedding/apexBaseOptions.js";
 import {
   buildCategorySeriesLabels,
   buildDatetimePoints,
   buildNumericDataByField,
-} from "../embedding/seriesBuilder";
+} from "../embedding/seriesBuilder.js";
 
 export default function LineChart({
   data,

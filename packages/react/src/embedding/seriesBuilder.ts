@@ -1,4 +1,8 @@
-import { toCategoryString, toFiniteNumber, toMilliseconds } from "./chartData";
+import {
+  toCategoryString,
+  toFiniteNumber,
+  toMilliseconds,
+} from "./chartData.js";
 
 type Row = Record<string, unknown>;
 

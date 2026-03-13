@@ -1,13 +1,13 @@
 import { useId } from "react";
 import Chart from "react-apexcharts";
-import type { ChartComponentProps } from "./types";
-import type { EmbeddingField } from "../types";
-import { buildApexBaseOptions } from "../embedding/apexBaseOptions";
+import type { ChartComponentProps } from "./types.js";
+import type { EmbeddingField } from "../types/index.js";
+import { buildApexBaseOptions } from "../embedding/apexBaseOptions.js";
 import {
   buildCategorySeriesLabels,
   buildNumericSeries,
   buildRangeBarPoints,
-} from "../embedding/seriesBuilder";
+} from "../embedding/seriesBuilder.js";
 
 // Normalize start/end which can be either a single EmbeddingField or EmbeddingField[]
 function normalizeField(
