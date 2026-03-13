@@ -5,7 +5,6 @@
 ### Turn any dataset into the right chart. AI picks the chart. JavaScript renders it. Your full dataset never touches an LLM.
 ![npm](https://img.shields.io/npm/v/@openvizai/core)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Bundle](https://img.shields.io/bundlephobia/minzip/@openvizai/core)
 
 
 The missing intelligence layer between your data pipeline and your visualization.
