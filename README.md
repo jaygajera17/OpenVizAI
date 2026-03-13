@@ -274,7 +274,7 @@ Contributions are welcome.
 
 ## License 📄
 
-[MIT](license.md)
+[MIT](https://github.com/OpenVizAI/OpenVizAI/blob/main/LICENSE.md)
 
 ---
 
