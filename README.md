@@ -2,21 +2,25 @@
 
 # OpenVizAI
 
-### Turn any dataset into the right chart — intelligently, instantly.
+### Turn any dataset into the right chart. AI picks the chart. JavaScript renders it. Your full dataset never touches an LLM.
+![npm](https://img.shields.io/npm/v/@openvizai/core)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Bundle](https://img.shields.io/bundlephobia/minzip/@openvizai/core)
+
 
 The missing intelligence layer between your data pipeline and your visualization.
 
-Prompt in. Chart out. Under 3,000 tokens. Every time.
+Prompt and data in. Chart out. Under 3,000 tokens. Every time.
 
 </div>
 
----
+
 
 ## The Problem
 
 Every "AI + data" tool makes the same mistake: they treat the LLM like a database.
 
-Send 1,000 rows of JSON to a model and ask it to generate chart data? You get:
+Send 1,000 rows of JSON to a model and ask it to generate chart data? Result into:
 
 - **Context window overflow** on large datasets
 - **High token cost** — paying for data transformation the LLM shouldn't be doing
@@ -158,7 +162,7 @@ The LLM doesn't just match patterns — it understands user intent. Ask for _"sh
 
 ### Drop-in visualization for Text-to-SQL
 
-Your SQL pipeline returns a JSON result set. You don't know the schema ahead of time. Pass it to OpenVizAI with the original user prompt — get back a fully configured chart.
+Your SQL pipeline returns a JSON result set after executing a query. You don't know the result ahead of time. Just Pass that result to OpenVizAI with the original user prompt — get back a fully configured chart.
 
 ```
 Text-to-SQL → Query result (JSON) → OpenVizAI → Interactive chart
@@ -184,7 +188,7 @@ import { analyzeChart } from "@openvizai/core";
 const result = await analyzeChart({
   prompt: "Show revenue trends over time",
   data: myDataset,
-  config: { provider: "google", apiKey: process.env.GEMINI_API_KEY },
+  config: { provider: "openai", apiKey: process.env.OPENAI_API_KEY },
 });
 
 // result.result → { chart_type, embedding, meta }
@@ -217,12 +221,9 @@ The playground features built-in example datasets so you can start generating ch
 
 ## Roadmap
 
-### Near-Term
 
 - [ ] Full ApexCharts chart type coverage (heatmap, scatter, candlestick, treemap, etc.)
 - [ ] Improved sampling strategies for highly skewed and sparse datasets
-
-### Mid-Term
 
 - [ ] **VizEngine abstraction** — pluggable renderer interface to target Chart.js, Recharts, or D3 from the same config
 - [ ] **Data insights** — surface trends, anomalies, and statistical summaries from datasets without additional LLM calls
@@ -230,7 +231,7 @@ The playground features built-in example datasets so you can start generating ch
 
 ### Future
 
-- [ ] **Prompt-driven theming** — _"Use our brand colors"_ or _"dark mode"_ applied via natural language
+- [ ] **Prompt-driven theming** — _"Use custom brand colors"_ or _"dark mode"_ applied via natural language
 - [ ] **Config export** — export generated chart configs as reusable JSON or component code
 
 ---
