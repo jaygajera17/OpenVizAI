@@ -19,12 +19,12 @@ function ChartError({ message }: { message: string }) {
 }
 
 /**
- * Renders a single chart from OpenVizAI embedding metadata.
+ * Renders a single chart from OpenVizAI chart specification metadata.
  *
  * Accepts the output of `analyzeChart()` and visualizes it using ApexCharts.
  * Supports bar, line, pie, donut, radar, and range bar charts out of the box.
  *
- * @param props - Chart data, type, embedding, and optional config.
+ * @param props - Chart data, type, chartSpec, and optional config.
  *
  * @example
  * ```tsx
@@ -33,7 +33,7 @@ function ChartError({ message }: { message: string }) {
  * <OpenVizRenderer
  *   data={rows}
  *   chartType={result.chart.chart_type}
- *   embedding={result.chart.embedding}
+ *   chartSpec={result.chart.chartSpec}
  *   meta={result.meta}
  * />
  * ```
@@ -41,7 +41,7 @@ function ChartError({ message }: { message: string }) {
 export default function OpenVizRenderer({
   data,
   chartType,
-  embedding,
+  chartSpec,
   meta,
   config,
   className,
@@ -69,7 +69,7 @@ export default function OpenVizRenderer({
       <ChartComponent
         data={data}
         chartType={chartType}
-        embedding={embedding}
+        chartSpec={chartSpec}
         meta={meta}
         config={config}
       />

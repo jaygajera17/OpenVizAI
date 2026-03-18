@@ -48,11 +48,11 @@ export interface AnalyzeChartInput {
 /**
  * Return type of {@link analyzeChart}.
  *
- * Contains the full chart result (type, embedding, metadata) and the
+ * Contains the full chart result (type, chartSpec, metadata) and the
  * subset of rows that were actually sent to the LLM.
  */
 export interface AnalyzeChartResult {
-  /** The chart result including chart_type, embedding, and meta. */
+  /** The chart result including chart_type, chartSpec, and meta. */
   result: ChartResult;
   /** The sampled rows that were sent to the LLM. */
   sampleUsed: Record<string, unknown>[];

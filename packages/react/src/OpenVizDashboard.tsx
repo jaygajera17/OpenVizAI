@@ -5,7 +5,7 @@ import type { OpenVizDashboardProps } from "./types/dashboard.js";
  * Renders multiple charts in a responsive grid layout.
  *
  * Accepts the output of `analyzeDashboard()` and renders each chart
- * as an independent `<OpenVizRenderer />` with its own embedding + meta.
+ * as an independent `<OpenVizRenderer />` with its own chartSpec + meta.
  *
  * @param props - Data, chart configs, and optional grid/layout settings.
  *
@@ -79,7 +79,7 @@ export default function OpenVizDashboard({
           <OpenVizRenderer
             data={data}
             chartType={chart.chart_type}
-            embedding={chart.embedding}
+            chartSpec={chart.chartSpec}
             meta={chart.meta}
             config={config}
           />

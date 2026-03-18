@@ -1,6 +1,6 @@
 {
     "statusCode": 200,
-    "message": "embedding generated",
+    "message": "chart specification generated",
     "data": {
         "result": {
             "response_type": "graphical",
@@ -11,7 +11,7 @@
             },
             "chart": {
                 "chart_type": "line",
-                "embedding": {
+                "chartSpec": {
                     "x": [
                         {
                             "field": "month",

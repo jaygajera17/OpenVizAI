@@ -13,7 +13,7 @@ export { inspectSchema } from "./analysis/schemaInspector.js";
 export type { SchemaColumn, SchemaInfo } from "./analysis/schemaInspector.js";
 
 // Post-LLM validation
-export { validateEmbeddingConsistency } from "./utils/embeddingValidator.js";
+export { validateChartSpecConsistency } from "./utils/chartSpecValidator.js";
 
 // Prompt (for consumers who need the raw prompt template)
 export { responseFormatterPrompt } from "./prompts/responseFormatterPrompt.js";
@@ -26,9 +26,9 @@ export type {
   AnalyzeChartConfig,
   AnalyzeChartInput,
   AnalyzeChartResult,
-  EmbeddingField,
-  EmbeddingFieldWithType,
-  ChartEmbedding,
+  ChartSpecField,
+  ChartSpecFieldWithType,
+  ChartSpec,
 } from "./types/index.js";
 
 export type {

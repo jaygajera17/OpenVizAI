@@ -8,13 +8,13 @@ import { sampleDataset } from "./datasetSampler.js";
 import { formatData } from "../utils/formatData.js";
 import { validateInput } from "../utils/validation.js";
 import { inspectSchema } from "./schemaInspector.js";
-import { validateEmbeddingConsistency } from "../utils/embeddingValidator.js";
-import { generateDashboardEmbeddings } from "../agents/dashboardAgent.js";
+import { validateChartSpecConsistency } from "../utils/chartSpecValidator.js";
+import { generateDashboardChartSpecs } from "../agents/dashboardAgent.js";
 
 /**
  * Analyze a user prompt and dataset to produce multiple chart recommendations for a dashboard.
  *
- * Returns an array of chart items, each with its own chart type, embedding, and metadata.
+ * Returns an array of chart items, each with its own chart type, chartSpec, and metadata.
  * Uses a single LLM call to generate all charts at once.
  *
  * @param input - The prompt, dataset rows, optional LLM config, and dashboard constraints.
@@ -59,7 +59,7 @@ export async function analyzeDashboard(
   const sampleData = formatData(sampleUsed);
 
   // 6. Call LLM — single call that returns multiple chart configs
-  const charts = await generateDashboardEmbeddings({
+  const charts = await generateDashboardChartSpecs({
     prompt: input.prompt,
     sampleData,
     config,
@@ -70,14 +70,14 @@ export async function analyzeDashboard(
 
   // 7. Post-LLM validation on each chart item
   const validatedCharts: DashboardChartItem[] = charts.map((item) => {
-    const validated = validateEmbeddingConsistency({
+    const validated = validateChartSpecConsistency({
       response_type: "graphical",
       meta: item.meta,
-      chart: { chart_type: item.chart_type, embedding: item.embedding },
+      chart: { chart_type: item.chart_type, chartSpec: item.chartSpec },
     });
     return {
       chart_type: validated.chart.chart_type,
-      embedding: validated.chart.embedding,
+      chartSpec: validated.chart.chartSpec,
       meta: validated.meta,
     };
   });

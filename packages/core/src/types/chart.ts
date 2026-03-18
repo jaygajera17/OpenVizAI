@@ -1,10 +1,10 @@
 import type { ChartType } from "@openvizai/shared-types";
-import type { ChartEmbedding } from "./embedding.js";
+import type { ChartSpec } from "./chartSpec.js";
 
 export { ChartType };
 
 /**
- * Metadata returned by the LLM alongside the chart embedding.
+ * Metadata returned by the LLM alongside the chart specification.
  *
  * Provides a human-readable title, optional subtitle, and an
  * explanation of how the LLM interpreted the user's query.
@@ -22,7 +22,7 @@ export interface ChartMeta {
  * Complete single-chart result returned by `analyzeChart`.
  *
  * Contains the response type, metadata, and the chart payload
- * (chart_type + embedding) ready to be passed to `<OpenVizRenderer />`.
+ * (chart_type + chartSpec) ready to be passed to `<OpenVizRenderer />`.
  */
 export interface ChartResult {
   /** Always `"graphical"` for single-chart results. */
@@ -34,6 +34,6 @@ export interface ChartResult {
     /** Selected chart type (e.g. `"bar"`, `"line"`, `"pie"`). */
     chart_type: ChartType;
     /** Field mappings describing how data maps to visual axes. */
-    embedding: ChartEmbedding;
+    chartSpec: ChartSpec;
   };
 }

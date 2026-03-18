@@ -1,4 +1,11 @@
-import type { ChartType } from "@openvizai/shared-types";
+import type {
+  ChartConfig,
+  ChartMeta,
+  ChartSpec,
+  DashboardChartItem,
+  DashboardResult,
+  SingleChartResult,
+} from "@openvizai/shared-types";
 
 export type Session = {
   session_id: string;
@@ -8,71 +15,22 @@ export type Session = {
   updated_ts: string;
 };
 
-export type EmbeddingField = {
-  field: string;
-  label: string;
-  unit: string | null;
+export type { ChartMeta, ChartSpec, DashboardChartItem };
+
+export type ChartResultItem = {
+  chart_type: ChartConfig["chart_type"];
+  chartSpec: ChartSpec;
 };
 
-export type EmbeddingFieldWithType = EmbeddingField & {
-  type: "bar" | "line" | "area";
+export type SingleChartResultView = Omit<SingleChartResult, "chart"> & {
+  chart: ChartResultItem;
 };
 
-export type ChartEmbedding = {
-  x: EmbeddingField[] | null;
-  y: EmbeddingFieldWithType[] | null;
-  group: EmbeddingField[] | null;
-  category: EmbeddingField[] | null;
-  value: EmbeddingField[] | null;
-  source: EmbeddingField[] | null;
-  target: EmbeddingField[] | null;
-  start: EmbeddingField[] | null;
-  end: EmbeddingField[] | null;
-  series: EmbeddingField[] | null;
-  path: EmbeddingField[] | null;
-  is_stacked: boolean;
-  is_horizontal: boolean;
-  isSemanticColors: boolean;
-  colorSemantic:
-    | "positive"
-    | "negative"
-    | "neutral"
-    | "warning"
-    | "caution"
-    | "target"
-    | "highlight"
-    | "missing"
-    | "forecast"
-    | null;
+export type DashboardResultView = Omit<DashboardResult, "charts"> & {
+  charts: ChartResultItem[];
 };
 
-export type ChartMeta = {
-  title: string;
-  subtitle: string | null;
-  query_explanation: string;
-};
-
-export type DashboardChartItem = {
-  chart_type: ChartType;
-  meta: ChartMeta;
-  embedding: ChartEmbedding;
-};
-
-export type SingleChartResult = {
-  response_type: "graphical";
-  meta: ChartMeta;
-  chart: {
-    chart_type: ChartType;
-    embedding: ChartEmbedding;
-  };
-};
-
-export type DashboardResult = {
-  response_type: "dashboard";
-  charts: DashboardChartItem[];
-};
-
-export type ChartResultData = SingleChartResult | DashboardResult;
+export type ChartResultData = SingleChartResultView | DashboardResultView;
 
 export type Message = {
   type: "human" | "ai";
@@ -80,7 +38,7 @@ export type Message = {
   additional_kwargs: {
     data?: unknown;
   };
-  response_metadata: SingleChartResult;
+  response_metadata: SingleChartResultView;
 };
 
 export type MessageResponse = {

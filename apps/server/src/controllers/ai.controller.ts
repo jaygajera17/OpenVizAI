@@ -93,10 +93,15 @@ class AIController {
         },
       );
 
-      return successResponse(res, HTTP_STATUS_CODE.OK, "embedding generated", {
-        result: result.result,
-        rows: data,
-      });
+      return successResponse(
+        res,
+        HTTP_STATUS_CODE.OK,
+        "chart specification generated",
+        {
+          result: result.result,
+          rows: data,
+        },
+      );
     } catch (error) {
       next(error);
     }

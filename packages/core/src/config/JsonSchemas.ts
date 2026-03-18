@@ -1,7 +1,7 @@
 import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
 
 // Raw JSON schema — Gemini compatible
-const embeddingField = {
+const chartSpecField = {
   type: "object",
   properties: {
     field: { type: "string" },
@@ -11,7 +11,7 @@ const embeddingField = {
   required: ["field", "label"],
 };
 
-const embeddingFieldWithType = {
+const chartSpecFieldWithType = {
   type: "object",
   properties: {
     field: { type: "string" },
@@ -39,20 +39,20 @@ export const responseFormatterSchemaRaw = {
       type: "object",
       properties: {
         chart_type: { type: "string", enum: SUPPORTED_CHART_TYPES },
-        embedding: {
+        chartSpec: {
           type: "object",
           properties: {
-            x: { type: "array", items: embeddingField },
-            y: { type: "array", items: embeddingFieldWithType },
-            group: { type: "array", items: embeddingField },
-            category: { type: "array", items: embeddingField },
-            value: { type: "array", items: embeddingField },
-            source: { type: "array", items: embeddingField },
-            target: { type: "array", items: embeddingField },
-            start: { type: "array", items: embeddingField },
-            end: { type: "array", items: embeddingField },
-            series: { type: "array", items: embeddingField },
-            path: { type: "array", items: embeddingField },
+            x: { type: "array", items: chartSpecField },
+            y: { type: "array", items: chartSpecFieldWithType },
+            group: { type: "array", items: chartSpecField },
+            category: { type: "array", items: chartSpecField },
+            value: { type: "array", items: chartSpecField },
+            source: { type: "array", items: chartSpecField },
+            target: { type: "array", items: chartSpecField },
+            start: { type: "array", items: chartSpecField },
+            end: { type: "array", items: chartSpecField },
+            series: { type: "array", items: chartSpecField },
+            path: { type: "array", items: chartSpecField },
             is_stacked: { type: "boolean" },
             is_horizontal: { type: "boolean" },
             isSemanticColors: { type: "boolean" },
@@ -74,7 +74,7 @@ export const responseFormatterSchemaRaw = {
           required: ["is_stacked", "is_horizontal", "isSemanticColors"],
         },
       },
-      required: ["chart_type", "embedding"],
+      required: ["chart_type", "chartSpec"],
     },
   },
   required: ["response_type", "meta", "chart"],
@@ -98,20 +98,20 @@ export const dashboardResponseSchemaRaw = {
             },
             required: ["title", "query_explanation"],
           },
-          embedding: {
+          chartSpec: {
             type: "object",
             properties: {
-              x: { type: "array", items: embeddingField },
-              y: { type: "array", items: embeddingFieldWithType },
-              group: { type: "array", items: embeddingField },
-              category: { type: "array", items: embeddingField },
-              value: { type: "array", items: embeddingField },
-              source: { type: "array", items: embeddingField },
-              target: { type: "array", items: embeddingField },
-              start: { type: "array", items: embeddingField },
-              end: { type: "array", items: embeddingField },
-              series: { type: "array", items: embeddingField },
-              path: { type: "array", items: embeddingField },
+              x: { type: "array", items: chartSpecField },
+              y: { type: "array", items: chartSpecFieldWithType },
+              group: { type: "array", items: chartSpecField },
+              category: { type: "array", items: chartSpecField },
+              value: { type: "array", items: chartSpecField },
+              source: { type: "array", items: chartSpecField },
+              target: { type: "array", items: chartSpecField },
+              start: { type: "array", items: chartSpecField },
+              end: { type: "array", items: chartSpecField },
+              series: { type: "array", items: chartSpecField },
+              path: { type: "array", items: chartSpecField },
               is_stacked: { type: "boolean" },
               is_horizontal: { type: "boolean" },
               isSemanticColors: { type: "boolean" },
@@ -133,7 +133,7 @@ export const dashboardResponseSchemaRaw = {
             required: ["is_stacked", "is_horizontal", "isSemanticColors"],
           },
         },
-        required: ["chart_type", "meta", "embedding"],
+        required: ["chart_type", "meta", "chartSpec"],
       },
     },
   },

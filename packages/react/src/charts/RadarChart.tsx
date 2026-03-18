@@ -1,19 +1,19 @@
 import Chart from "react-apexcharts";
 import type { ChartComponentProps } from "./types.js";
-import { buildApexBaseOptions } from "../embedding/apexBaseOptions.js";
+import { buildApexBaseOptions } from "../chartSpec/apexBaseOptions.js";
 import {
   buildCategorySeriesLabels,
   buildNumericSeries,
-} from "../embedding/seriesBuilder.js";
+} from "../chartSpec/seriesBuilder.js";
 
 export default function RadarChart({
   data,
-  embedding,
+  chartSpec,
   meta,
   config,
 }: ChartComponentProps) {
-  const xField = embedding.x?.[0]?.field;
-  const yFields = embedding.y ?? [];
+  const xField = chartSpec.x?.[0]?.field;
+  const yFields = chartSpec.y ?? [];
 
   if (!xField) {
     return (
@@ -52,7 +52,7 @@ export default function RadarChart({
     xaxis: {
       categories: labels,
       title: {
-        text: embedding.x?.[0]?.label ?? undefined,
+        text: chartSpec.x?.[0]?.label ?? undefined,
       },
     },
     stroke: {
@@ -62,7 +62,7 @@ export default function RadarChart({
       opacity: 0.2,
     },
     markers: {
-      size: embedding.markers_size ?? 3,
+      size: chartSpec.markers_size ?? 3,
     },
   };
 

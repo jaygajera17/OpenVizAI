@@ -1,19 +1,19 @@
 import type { ChartType } from "@openvizai/shared-types";
-import type { ChartEmbedding } from "./embedding.js";
+import type { ChartSpec } from "./chartSpec.js";
 import type { ChartMeta } from "./chart.js";
 import type { AnalyzeChartConfig } from "./api.js";
 
 /**
  * A single chart item within a dashboard result.
  *
- * Each item has its own chart type, embedding, and metadata.
+ * Each item has its own chart type, chartSpec, and metadata.
  * Pass directly to `<OpenVizRenderer />` to render.
  */
 export interface DashboardChartItem {
   /** Which chart type this item uses (e.g. `"bar"`, `"line"`, `"pie"`). */
   chart_type: ChartType;
-  /** Full embedding ready for `<OpenVizRenderer />`. */
-  embedding: ChartEmbedding;
+  /** Full chartSpec ready for `<OpenVizRenderer />`. */
+  chartSpec: ChartSpec;
   /** Title / subtitle / explanation for this specific chart. */
   meta: ChartMeta;
 }

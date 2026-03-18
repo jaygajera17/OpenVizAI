@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
-import { EmbeddingSchema } from "../types/embedding.js";
+import { ChartSpecSchema } from "../types/chartSpec.js";
 
 const dashboardChartItemSchema = z.object({
   chart_type: z.enum(SUPPORTED_CHART_TYPES),
@@ -9,7 +9,7 @@ const dashboardChartItemSchema = z.object({
     subtitle: z.string().nullable(),
     query_explanation: z.string(),
   }),
-  embedding: EmbeddingSchema,
+  chartSpec: ChartSpecSchema,
 });
 
 export const dashboardResponseSchema = z.object({
