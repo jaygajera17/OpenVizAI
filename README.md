@@ -3,9 +3,9 @@
 # OpenVizAI
 
 ### Turn any dataset into the right chart. AI picks the chart. JavaScript renders it. Your full dataset never touches an LLM.
+
 ![npm](https://img.shields.io/npm/v/@openvizai/core)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-
 
 The missing intelligence layer between your data pipeline and your visualization.
 
@@ -21,13 +21,11 @@ Prompt and data in. Chart out. Under 3,000 tokens. Every time.
 npm install @openvizai/core @openvizai/react @openvizai/shared-types
 ```
 
-
 | Package                                                                            | Description                                                                      |
 | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [`@openvizai/core`](https://www.npmjs.com/package/@openvizai/core)                 | Chart intelligence engine — analyzes datasets, calls LLM, returns chart metadata |
 | [`@openvizai/react`](https://www.npmjs.com/package/@openvizai/react)               | React components — renders charts from metadata + dataset using ApexCharts       |
 | [`@openvizai/shared-types`](https://www.npmjs.com/package/@openvizai/shared-types) | Shared TypeScript types and constants across packages                            |
-
 
 ## The Problem
 
@@ -58,7 +56,7 @@ OpenVizAI takes a fundamentally different approach: **use the LLM for decisions,
 Dataset → Sample 2-3 rows → LLM decides chart type + field mapping → JS engine transforms full dataset → Chart
 ```
 
-The LLM only sees a tiny sample of your data. It decides _what_ to visualize (chart type, axes, series, grouping). Then deterministic JavaScript functions called **deterministic embedding functions** handle the actual data transformation across the full dataset.
+The LLM only sees a tiny sample of your data. It decides _what_ to visualize (chart type, axes, series, grouping) and outputs a `chartSpec`. Deterministic JavaScript code then transforms the full dataset for rendering.
 
 The result: correct charts from any dataset shape, under 3,000 tokens, every time.
 
@@ -67,7 +65,6 @@ The result: correct charts from any dataset shape, under 3,000 tokens, every tim
 </div>
 
 ---
-
 
 ## Demo
 
@@ -94,17 +91,17 @@ The result: correct charts from any dataset shape, under 3,000 tokens, every tim
 > **Your Data** (any size)
 > → **Smart Sampler** (2–3 rows)
 > → **LLM** decides chart type, axes, series, labels
-> → **Embedding Functions** (JS) transform the full dataset
+> → **Deterministic Chart Runtime** (JS) transforms the full dataset
 > → **ApexCharts** renders the final chart
 
-**Key insight:** The LLM never sees your full dataset. It receives a small sample and returns a metadata object called an **embedding** — a declarative description of how to map fields to axes, series, and categories. Deterministic code does the rest.
+**Key insight:** The LLM never sees your full dataset. It receives a small sample and returns a metadata object called a **chartSpec** — a declarative description of how to map fields to axes, series, and categories. Deterministic code does the rest.
 
 Example LLM output:
 
 ```json
 {
   "chart_type": "bar",
-  "embedding": {
+  "chartSpec": {
     "x": [{ "field": "month", "label": "Month" }],
     "y": [{ "field": "revenue", "label": "Revenue" }]
   },
@@ -115,7 +112,20 @@ Example LLM output:
 }
 ```
 
-This metadata is all the rendering layer needs. The embedding functions take this plus the original dataset and produce the final chart — no matter if the dataset has 100 or 500,000 rows.
+This metadata is all the rendering layer needs. The deterministic runtime takes this plus the original dataset and produces the final chart — no matter if the dataset has 100 or 500,000 rows.
+
+## Open Standard
+
+OpenVizAI uses `chartSpec` as an open, versioned contract.
+
+- Current version: `openvizai/spec/v1`
+- Per chart example: [docs](docs/README.md)
+
+- "Other tools can output chartSpec-compatible JSON and automatically work with every OpenVizAI adapter."
+
+Requirement for custom generators:
+
+- If you build your own chartSpec generation logic from sample data, your output must follow `openvizai/spec/v1` to ensure compatibility with OpenVizAI adapters .
 
 ---
 
@@ -191,7 +201,7 @@ const result = await analyzeChart({
   config: { provider: "openai", apiKey: process.env.OPENAI_API_KEY },
 });
 
-// result.result → { chart_type, embedding, meta }
+// result.result → { chart_type, chartSpec, meta }
 ```
 
 **Client-side** — render the chart:
@@ -202,7 +212,7 @@ import { OpenVizRenderer } from "@openvizai/react";
 <OpenVizRenderer
   data={dataset}
   chartType={result.chart_type}
-  embedding={result.embedding}
+  chartSpec={result.chartSpec}
   meta={result.meta}
 />;
 ```
@@ -213,14 +223,13 @@ import { OpenVizRenderer } from "@openvizai/react";
 
 The repo includes a full-stack playground application so you can try OpenVizAI immediately.
 
-**See the [Playground Setup Guide](docs/PLAYGROUND.md) for step-by-step instructions.**
+**See the [Playground Setup Guide](PLAYGROUND.md) for step-by-step instructions.**
 
 The playground features built-in example datasets so you can start generating charts immediately — no data preparation needed.
 
 ---
 
 ## Roadmap
-
 
 - [ ] Full ApexCharts chart type coverage (heatmap, scatter, candlestick, treemap, etc.)
 - [ ] Improved sampling strategies for highly skewed and sparse datasets

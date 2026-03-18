@@ -10,7 +10,7 @@ React renderer components for OpenVizAI chart metadata.
 
 OpenVizAI works as an interlinked backend + frontend flow:
 
-1. Backend (`@openvizai/core`) analyzes prompt + sampled rows and returns chart metadata (`chart_type`, `embedding`, `meta`).
+1. Backend (`@openvizai/core`) analyzes prompt + sampled rows and returns chart metadata (`chart_type`, `chartSpec`, `meta`).
 2. Frontend (`@openvizai/react`) uses that metadata to render production-ready charts.
 
 This separation is the core idea behind generative charts in OpenVizAI: LLM for decision-making, deterministic code for full-data rendering.
@@ -18,7 +18,7 @@ This separation is the core idea behind generative charts in OpenVizAI: LLM for 
 If you're new to the repo, start here:
 
 - Root architecture + end-to-end explanation: https://github.com/OpenVizAI/OpenVizAI#readme
-- Playground setup guide: https://github.com/OpenVizAI/OpenVizAI/blob/main/docs/PLAYGROUND.md
+- Playground setup guide: https://github.com/OpenVizAI/OpenVizAI/blob/main/PLAYGROUND.md
 - Backend package docs (`@openvizai/core`): https://www.npmjs.com/package/@openvizai/core
 
 ## Install
@@ -47,7 +47,7 @@ const data = [
   { day: "Wed", kwh: 2290, peak_kw: 502, building: "Plant-A" },
 ];
 
-const embedding = {
+const chartSpec = {
   x: [{ field: "day", label: "Day" }],
   y: [
     { type: "bar", unit: "kWh", field: "kwh", label: "Energy Usage" },
@@ -76,7 +76,7 @@ function App() {
       <OpenVizRenderer
         data={data}
         chartType="bar"
-        embedding={embedding}
+        chartSpec={chartSpec}
         meta={meta}
       />
     </div>
@@ -101,7 +101,7 @@ const { result } = await analyzeChart({
 <OpenVizRenderer
   data={rows}
   chartType={result.chart.chart_type}
-  embedding={result.chart.embedding}
+  chartSpec={result.chart.chartSpec}
   meta={result.meta}
 />;
 ```
@@ -110,7 +110,7 @@ const { result } = await analyzeChart({
 
 | Export                                            | Description                                             |
 | ------------------------------------------------- | ------------------------------------------------------- |
-| `OpenVizRenderer`                                 | Renders a single chart from embedding metadata          |
+| `OpenVizRenderer`                                 | Renders a single chart from chartSpec metadata          |
 | `OpenVizDashboard`                                | Renders a grid of charts from `analyzeDashboard` output |
 | `registerChart`                                   | Register a custom chart component for a chart type      |
 | `getChartComponent`                               | Get the registered component for a chart type           |
@@ -121,7 +121,7 @@ const { result } = await analyzeChart({
 
 - Use this package in the frontend/UI layer.
 - Pair with `@openvizai/core` for end-to-end prompt-to-chart flow.
-- The `embedding` and `meta` objects come directly from the `analyzeChart()` / `analyzeDashboard()` response.
+- The `chartSpec` and `meta` objects come directly from the `analyzeChart()` / `analyzeDashboard()` response.
 
 For full docs, see the root project README:
 https://github.com/OpenVizAI/OpenVizAI
