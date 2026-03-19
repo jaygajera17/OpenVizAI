@@ -5,7 +5,7 @@ Core chart intelligence engine for OpenVizAI.
 `@openvizai/core` analyzes a user prompt and a small sample of dataset rows, then returns deterministic chart metadata:
 
 - chart type
-- embedding (x/y/series/category field mappings)
+- chartSpec (x/y/series/category field mappings)
 - chart title and explanatory metadata
 
 The package is designed for server-side use in APIs, copilots, and analytics systems.
@@ -16,7 +16,7 @@ The package is designed for server-side use in APIs, copilots, and analytics sys
 
 OpenVizAI works in two connected steps:
 
-1. Backend (`@openvizai/core`) reads your prompt + a tiny sample of rows and returns chart metadata (`chart_type`, `embedding`, `meta`).
+1. Backend (`@openvizai/core`) reads your prompt + a tiny sample of rows and returns chart metadata (`chart_type`, `chartSpec`, `meta`).
 2. Frontend (`@openvizai/react`) renders that metadata against the full dataset.
 
 This is how generative charts stay accurate and cost-efficient: the LLM decides the visualization strategy, while deterministic code handles full data mapping.
@@ -24,7 +24,7 @@ This is how generative charts stay accurate and cost-efficient: the LLM decides 
 If you're new to the repo, start here:
 
 - Root architecture + full explanation: https://github.com/OpenVizAI/OpenVizAI#readme
-- Playground setup guide: https://github.com/OpenVizAI/OpenVizAI/blob/main/docs/PLAYGROUND.md
+- Playground setup guide: https://github.com/OpenVizAI/OpenVizAI/blob/main/PLAYGROUND.md
 - Renderer package docs (`@openvizai/react`): https://www.npmjs.com/package/@openvizai/react
 
 ## Install
@@ -60,7 +60,7 @@ const result = await analyzeChart({
 });
 
 console.log(result.result.chart.chart_type); // e.g. "line"
-console.log(result.result.chart.embedding); // { x: [...], y: [...], ... }
+console.log(result.result.chart.chartSpec); // { x: [...], y: [...], ... }
 console.log(result.result.meta.title); // "Revenue Trends Over Time"
 ```
 
@@ -76,17 +76,17 @@ const { result } = await analyzeDashboard({
   maxCharts: 4,
 });
 
-// result.charts → array of { chart_type, embedding, meta }
+// result.charts → array of { chart_type, chartSpec, meta }
 ```
 
 ## API Surface
 
 | Export                                 | Description                                                             |
 | -------------------------------------- | ----------------------------------------------------------------------- |
-| `analyzeChart(options)`                | Analyze a prompt + dataset → single chart type, embedding, and metadata |
+| `analyzeChart(options)`                | Analyze a prompt + dataset → single chart type, chartSpec, and metadata |
 | `analyzeDashboard(options)`            | Analyze a prompt + dataset → multiple chart configs for a dashboard     |
 | `inspectSchema(sample)`                | Infer column names and types from dataset rows                          |
-| `validateEmbeddingConsistency(result)` | Post-LLM fix: ensure chart_type matches filled embedding fields         |
+| `validateChartSpecConsistency(result)` | Post-LLM fix: ensure chart_type matches filled chartSpec fields         |
 | `responseFormatterPrompt`              | Raw LLM prompt template (for advanced customization)                    |
 | `responseFormatterSchema`              | Zod schema used to validate LLM output                                  |
 | `SUPPORTED_CHART_TYPES`                | Array of all supported chart type strings                               |

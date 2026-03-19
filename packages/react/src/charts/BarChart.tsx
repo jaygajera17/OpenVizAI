@@ -1,18 +1,18 @@
 import { useId } from "react";
 import Chart from "react-apexcharts";
 import type { ChartComponentProps } from "./types.js";
-import type { EmbeddingField } from "../types/index.js";
-import { buildApexBaseOptions } from "../embedding/apexBaseOptions.js";
+import type { ChartSpecField } from "../types/index.js";
+import { buildApexBaseOptions } from "../chartSpec/apexBaseOptions.js";
 import {
   buildCategorySeriesLabels,
   buildNumericSeries,
   buildRangeBarPoints,
-} from "../embedding/seriesBuilder.js";
+} from "../chartSpec/seriesBuilder.js";
 
-// Normalize start/end which can be either a single EmbeddingField or EmbeddingField[]
+// Normalize start/end which can be either a single field or field array.
 function normalizeField(
-  field: EmbeddingField | EmbeddingField[] | null | undefined,
-): EmbeddingField | undefined {
+  field: ChartSpecField | ChartSpecField[] | null | undefined,
+): ChartSpecField | undefined {
   if (!field) return undefined;
   if (Array.isArray(field)) return field[0];
   return field;
@@ -28,13 +28,13 @@ function isNumericLike(value: unknown): boolean {
 function inferRangeFields(
   rows: Record<string, unknown>[],
   xField: string | undefined,
-  yFields: EmbeddingField[],
-  startField: EmbeddingField | undefined,
-  endField: EmbeddingField | undefined,
+  yFields: ChartSpecField[],
+  startField: ChartSpecField | undefined,
+  endField: ChartSpecField | undefined,
 ): {
   xField: string | undefined;
-  startField: EmbeddingField | undefined;
-  endField: EmbeddingField | undefined;
+  startField: ChartSpecField | undefined;
+  endField: ChartSpecField | undefined;
 } {
   let resolvedX = xField;
   let resolvedStart = startField;
@@ -44,10 +44,12 @@ function inferRangeFields(
     resolvedStart = resolvedStart ?? {
       field: yFields[0].field,
       label: yFields[0].label,
+      unit: yFields[0].unit,
     };
     resolvedEnd = resolvedEnd ?? {
       field: yFields[1].field,
       label: yFields[1].label,
+      unit: yFields[1].unit,
     };
   }
 
@@ -59,10 +61,18 @@ function inferRangeFields(
     );
 
     if (!resolvedStart && numericKeys[0]) {
-      resolvedStart = { field: numericKeys[0], label: numericKeys[0] };
+      resolvedStart = {
+        field: numericKeys[0],
+        label: numericKeys[0],
+        unit: null,
+      };
     }
     if (!resolvedEnd && numericKeys[1]) {
-      resolvedEnd = { field: numericKeys[1], label: numericKeys[1] };
+      resolvedEnd = {
+        field: numericKeys[1],
+        label: numericKeys[1],
+        unit: null,
+      };
     }
   }
 
@@ -89,20 +99,20 @@ function inferRangeFields(
 export default function BarChart({
   data,
   chartType,
-  embedding,
+  chartSpec,
   meta,
   config,
 }: ChartComponentProps) {
   const instanceId = useId();
-  const isRangeChart = chartType === "range_bar" || embedding.is_range;
+  const isRangeChart = chartType === "range_bar" || chartSpec.is_range;
 
   const apexType = isRangeChart ? ("rangeBar" as const) : ("bar" as const);
   const chartId = `${meta?.title || "bar-chart"}-${apexType}-${instanceId}`;
 
-  const xField = embedding.x?.[0]?.field;
-  const yFields = embedding.y ?? [];
-  const startField = normalizeField(embedding.start);
-  const endField = normalizeField(embedding.end);
+  const xField = chartSpec.x?.[0]?.field;
+  const yFields = chartSpec.y ?? [];
+  const startField = normalizeField(chartSpec.start);
+  const endField = normalizeField(chartSpec.end);
 
   const resolvedRangeFields = inferRangeFields(
     data,
@@ -212,17 +222,17 @@ export default function BarChart({
       ...baseOptions,
       chart: {
         ...baseOptions.chart,
-        stacked: embedding.is_stacked,
+        stacked: chartSpec.is_stacked,
       },
       plotOptions: {
         bar: {
-          horizontal: embedding.is_horizontal,
+          horizontal: chartSpec.is_horizontal,
         },
       },
       xaxis: {
         categories,
         title: {
-          text: embedding.x?.[0]?.label ?? undefined,
+          text: chartSpec.x?.[0]?.label ?? undefined,
         },
       },
     };
@@ -248,7 +258,7 @@ export default function BarChart({
     },
     plotOptions: {
       bar: {
-        horizontal: embedding.is_horizontal,
+        horizontal: chartSpec.is_horizontal,
       },
     },
     xaxis: {

@@ -5,10 +5,10 @@ export type {
   AnalyzeChartResult,
 } from "./api.js";
 export type {
-  EmbeddingField,
-  EmbeddingFieldWithType,
-  ChartEmbedding,
-} from "./embedding.js";
+  ChartSpecField,
+  ChartSpecFieldWithType,
+  ChartSpec,
+} from "./chartSpec.js";
 
 export type {
   DashboardChartItem,

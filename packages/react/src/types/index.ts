@@ -1,9 +1,12 @@
 export type {
-  EmbeddingField,
-  ChartEmbedding,
+  ChartSpecField,
+  ChartSpec,
   ChartMeta,
   OpenVizConfig,
   OpenVizRendererProps,
 } from "./renderer.js";
 
-export type { DashboardChartItem, OpenVizDashboardProps } from "./dashboard.js";
+export type {
+  OpenVizDashboardChartItem,
+  OpenVizDashboardProps,
+} from "./dashboard.js";

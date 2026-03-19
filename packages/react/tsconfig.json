@@ -11,7 +11,8 @@
     "moduleResolution": "bundler",
     "noEmit": true,
     "paths": {
-      "@openvizai/shared-types": ["../shared-types/src"]
+      "@openvizai/*": ["packages/*/dist"],
+      "@openvizai/shared-types": ["packages/shared-types/dist/index.d.ts"]
     }
   },
   "include": ["src"]

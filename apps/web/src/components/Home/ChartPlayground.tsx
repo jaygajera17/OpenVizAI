@@ -195,7 +195,6 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
                   className="form-control composer-input"
                   onChange={handleJsonUpload}
                 />
-               
               </div>
               <textarea
                 className="form-control font-monospace composer-input composer-json"
@@ -382,7 +381,7 @@ export default function ChartPlayground({ onGenerate, loading, error }: Props) {
             <OpenVizRenderer
               data={rows}
               chartType={chartResult.chart.chart_type}
-              embedding={chartResult.chart.embedding}
+              chartSpec={chartResult.chart.chartSpec}
               meta={chartResult.meta}
             />
           </div>

@@ -16,12 +16,12 @@ export { LineChart, BarChart, PieChart, RadarChart } from "./charts/index.js";
 
 // Types
 export type {
-  EmbeddingField,
-  ChartEmbedding,
+  ChartSpecField,
+  ChartSpec,
   ChartMeta,
   OpenVizConfig,
   OpenVizRendererProps,
-  DashboardChartItem,
+  OpenVizDashboardChartItem,
   OpenVizDashboardProps,
 } from "./types/index.js";
 

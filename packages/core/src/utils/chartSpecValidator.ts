@@ -12,7 +12,7 @@ import type { ChartSpec } from "../types/chartSpec.js";
  *
  * @example
  * ```ts
- * const fixed = validateEmbeddingConsistency(rawResult);
+ * const fixed = validateChartSpecConsistency(rawResult);
  * // fixed.chart.chartSpec is now consistent with fixed.chart.chart_type
  * ```
  */

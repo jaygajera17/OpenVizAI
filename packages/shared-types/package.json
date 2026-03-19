@@ -42,6 +42,9 @@
     "build": "tsc -p tsconfig.json",
     "prepublishOnly": "npm run build"
   },
+  "dependencies": {
+    "zod": "^3.0.0"
+  },
   "devDependencies": {
     "typescript": "^5.9.3"
   }
