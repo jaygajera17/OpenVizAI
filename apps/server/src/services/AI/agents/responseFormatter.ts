@@ -28,15 +28,22 @@ export const responseFormatterNode = async (state: any) => {
       pgPool,
     );
 
-    // Delegate to @openvizai/core
+    // Delegate to @openvizai/core using whichever API key is available
+    const llmProvider = OPENAI_API_KEY ? "openai" : "google";
+    const llmApiKey = OPENAI_API_KEY || GEMINI_API_KEY;
+    const model =
+      llmProvider === "openai"
+        ? "gpt-5-mini-2025-08-07"
+        : "gemini-3-flash-preview";
+
     const { result } = await analyzeChart({
       prompt: userPrompt,
       data: Array.isArray(data) ? data : [],
       config: {
-        apiKey: GEMINI_API_KEY,
-        provider: "google",
-        model: "gemini-3-flash-preview",
-      }
+        apiKey: llmApiKey,
+        provider: llmProvider,
+        model: model,
+      },
     });
 
     const aiMessage = new AIMessage({

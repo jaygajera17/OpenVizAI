@@ -63,7 +63,7 @@ Diversity rules:
 - Do NOT produce two charts with the same chart_type AND the same fields.
 - Prefer covering different aspects of the data (e.g., trend + distribution + comparison).
 
-Embedding rules per chart_type (same as single-chart mode):
+chartSpec rules per chart_type (same as single-chart mode):
 - line/bar: x (one field array), y (one+ fields array), category/value/start/end = null.
 - radar: x (one field array), y (one+ fields array), start/end/category/value = null.
 - range_bar: x (one field), start (one field), end (one field), y = null, is_horizontal = true.
@@ -76,9 +76,9 @@ Field rules:
 Each chart object must have:
 - meta: { title, subtitle (nullable), query_explanation }
 - chart_type: one of the supported types
-- embedding: full embedding object with all fields (null those not used)
+- chartSpec: full chartSpec object with all fields (null those not used)
 
 Make each title descriptive of the specific insight that chart reveals.
 
-CRITICAL: You MUST return AT LEAST 2 charts and ideally 3-4. A single chart is NOT acceptable as a dashboard. Each chart must be a complete object with all embedding fields present (set unused ones to null).
+CRITICAL: You MUST return AT LEAST 2 charts and ideally 3-4. A single chart is NOT acceptable as a dashboard. Each chart must be a complete object with all chartSpec fields present (set unused ones to null).
 `;

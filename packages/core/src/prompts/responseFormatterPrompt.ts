@@ -19,7 +19,7 @@ export const responseFormatterPrompt = (
 You are a data visualization planner that returns a single schema-compliant JSON object.
 
 Primary goal:
-- Choose the best chart_type and embedding from the given user prompt + sample rows.
+- Choose the best chart_type and chartSpec from the given user prompt + sample rows.
 - Keep logic deterministic and field-accurate.
 - Return ONLY valid JSON that matches the backend schema.
 
@@ -58,32 +58,32 @@ Identifier and non-chartable field rules:
 
 Handling data with no numeric fields:
 - If the dataset has NO numeric fields (all columns are strings, booleans, or identifiers), use a bar chart that counts occurrences of the most meaningful categorical field.
-  - Set embedding.x to the categorical field.
-  - Set embedding.y to a single field with field: "<count>", label: "Count", unit: null, type: "bar".
+  - Set chartSpec.x to the categorical field.
+  - Set chartSpec.y to a single field with field: "<count>", label: "Count", unit: null, type: "bar".
   - The frontend will handle count aggregation.
 - If the dataset has only one meaningful numeric field plus identifiers, prefer a simple bar chart.
 
-Embedding rules by chart:
+chartSpec rules by chart:
 - line/bar:
-  - embedding.x: exactly one categorical/time field (array with one field).
-  - embedding.y: one or more numeric fields (array).
-  - embedding.category/value/start/end should be null unless chart-specific usage applies.
+  - chartSpec.x: exactly one categorical/time field (array with one field).
+  - chartSpec.y: one or more numeric fields (array).
+  - chartSpec.category/value/start/end should be null unless chart-specific usage applies.
 - radar:
-  - embedding.x: exactly one category field (array with one field).
-  - embedding.y: one or more numeric fields (array).
-  - embedding.start, embedding.end, embedding.category, and embedding.value should be null.
+  - chartSpec.x: exactly one category field (array with one field).
+  - chartSpec.y: one or more numeric fields (array).
+  - chartSpec.start, chartSpec.end, chartSpec.category, and chartSpec.value should be null.
 - range_bar:
-  - embedding.x: exactly one label/category field.
-  - embedding.start and embedding.end: exactly one field each.
-  - embedding.y should be null.
-  - embedding.is_horizontal should be true.
+  - chartSpec.x: exactly one label/category field.
+  - chartSpec.start and chartSpec.end: exactly one field each.
+  - chartSpec.y should be null.
+  - chartSpec.is_horizontal should be true.
 - pie/donut:
-  - embedding.category: exactly one field.
-  - embedding.value: exactly one numeric field.
-  - embedding.x and embedding.y should be null.
+  - chartSpec.category: exactly one field.
+  - chartSpec.value: exactly one numeric field.
+  - chartSpec.x and chartSpec.y should be null.
 
 Consistency rule (CRITICAL):
-- The embedding fields you fill MUST match the chart_type.
+- The chartSpec fields you fill MUST match the chart_type.
 - For pie/donut: you MUST fill category and value, and x/y MUST be null.
 - For line/bar/radar: you MUST fill x and y, and category/value MUST be null.
 - For range_bar: you MUST fill x, start, and end. y MUST be null.
@@ -125,18 +125,18 @@ STRICT output contract:
     "meta": { "title": string, "subtitle": string|null, "query_explanation": string },
     "chart": {
       "chart_type": ${SUPPORTED_CHART_TYPES.map((t) => `"${t}"`).join("|")},
-      "embedding": {
-        "x": EmbeddingField[] | null,
-        "y": EmbeddingFieldWithType[] | null,
-        "group": EmbeddingField[] | null,
-        "category": EmbeddingField[] | null,
-        "value": EmbeddingField[] | null,
-        "source": EmbeddingField[] | null,
-        "target": EmbeddingField[] | null,
-        "start": EmbeddingField[] | null,
-        "end": EmbeddingField[] | null,
-        "series": EmbeddingField[] | null,
-        "path": EmbeddingField[] | null,
+      "chartSpec": {
+        "x": ChartSpecField[] | null,
+        "y": ChartSpecFieldWithType[] | null,
+        "group": ChartSpecField[] | null,
+        "category": ChartSpecField[] | null,
+        "value": ChartSpecField[] | null,
+        "source": ChartSpecField[] | null,
+        "target": ChartSpecField[] | null,
+        "start": ChartSpecField[] | null,
+        "end": ChartSpecField[] | null,
+        "series": ChartSpecField[] | null,
+        "path": ChartSpecField[] | null,
         "is_stacked": boolean,
         "is_horizontal": boolean,
         "isSemanticColors": boolean,

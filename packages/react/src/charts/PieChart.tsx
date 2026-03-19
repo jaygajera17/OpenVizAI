@@ -1,20 +1,20 @@
 import Chart from "react-apexcharts";
 import type { ChartComponentProps } from "./types.js";
-import { buildApexBaseOptions } from "../embedding/apexBaseOptions.js";
+import { buildApexBaseOptions } from "../chartSpec/apexBaseOptions.js";
 import {
   buildCategorySeriesLabels,
   buildSingleValueSeries,
-} from "../embedding/seriesBuilder.js";
+} from "../chartSpec/seriesBuilder.js";
 
 export default function PieChart({
   data,
   chartType,
-  embedding,
+  chartSpec,
   meta,
   config,
 }: ChartComponentProps) {
-  const categoryField = embedding.category?.[0]?.field;
-  const valueField = embedding.value?.[0]?.field;
+  const categoryField = chartSpec.category?.[0]?.field;
+  const valueField = chartSpec.value?.[0]?.field;
 
   if (!categoryField || !valueField) {
     return (
@@ -39,7 +39,7 @@ export default function PieChart({
   const series = buildSingleValueSeries(data, valueField);
 
   const pieType =
-    chartType === "donut" || embedding.is_donut
+    chartType === "donut" || chartSpec.is_donut
       ? ("donut" as const)
       : ("pie" as const);
 

@@ -10,7 +10,7 @@ import type { ChartType } from "@openvizai/shared-types";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { dashboardResponseSchemaRaw } from "../config/JsonSchemas.js";
 
-export interface GenerateDashboardEmbeddingsOptions {
+export interface GenerateDashboardChartSpecsOptions {
   prompt: string;
   sampleData: { columns: string[]; rows: string[][] };
   config: ResolvedConfig;
@@ -19,8 +19,8 @@ export interface GenerateDashboardEmbeddingsOptions {
   maxCharts?: number;
 }
 
-export async function generateDashboardEmbeddings(
-  options: GenerateDashboardEmbeddingsOptions,
+export async function generateDashboardChartSpecs(
+  options: GenerateDashboardChartSpecsOptions,
 ): Promise<DashboardChartItem[]> {
   const { prompt, sampleData, config, schema, charts, maxCharts } = options;
 
@@ -62,7 +62,7 @@ export async function generateDashboardEmbeddings(
   } catch (err) {
     if (err instanceof LLMError) throw err;
     throw new LLMError(
-      `Failed to generate dashboard embeddings: ${err instanceof Error ? err.message : String(err)}`,
+      `Failed to generate dashboard chart specs: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 }

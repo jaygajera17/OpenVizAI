@@ -18,3 +18,31 @@ export const SUPPORTED_CHART_TYPES = [
 
 /** Union of all supported chart type strings: "line" | "radar" | "bar" | "range_bar" | "pie" | "donut" */
 export type ChartType = (typeof SUPPORTED_CHART_TYPES)[number];
+
+export {
+  SERIES_VISUAL_TYPES,
+  COLOR_SEMANTICS,
+  LINE_CURVES,
+  ChartSpecFieldSchema,
+  ChartSpecFieldWithTypeSchema,
+  ChartSpecSchema,
+  ChartMetaSchema,
+  ChartConfigSchema,
+  SingleChartResultSchema,
+  DashboardChartItemSchema,
+  DashboardResultSchema,
+} from "./chartSpec.js";
+
+export type {
+  SeriesVisualType,
+  ColorSemantic,
+  LineCurve,
+  ChartSpecField,
+  ChartSpecFieldWithType,
+  ChartSpec,
+  ChartMeta,
+  ChartConfig,
+  SingleChartResult,
+  DashboardChartItem,
+  DashboardResult,
+} from "./chartSpec.js";

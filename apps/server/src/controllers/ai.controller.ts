@@ -16,7 +16,6 @@ interface AuthRequest extends Request {
 }
 
 class AIController {
-
   public async generateAnswer(
     req: AuthRequest,
     res: Response,
@@ -48,10 +47,17 @@ class AIController {
       }
       // Dashboard mode: generate multiple charts via analyzeDashboard
       if (dashboardMode) {
+        const llmProvider = OPENAI_API_KEY ? "openai" : "google";
+        const llmApiKey = OPENAI_API_KEY || GEMINI_API_KEY;
+        const model =
+          llmProvider === "openai"
+            ? "gpt-5-mini-2025-08-07"
+            : "gemini-3-flash-preview";
+
         const { result } = await analyzeDashboard({
           prompt,
           data,
-          config: { apiKey: GEMINI_API_KEY, provider: "google" },
+          config: { apiKey: llmApiKey, provider: llmProvider, model: model },
           charts,
           maxCharts,
         });
@@ -87,15 +93,20 @@ class AIController {
         },
       );
 
-      return successResponse(res, HTTP_STATUS_CODE.OK, "embedding generated", {
-        result: result.result,
-        rows: data,
-      });
+      return successResponse(
+        res,
+        HTTP_STATUS_CODE.OK,
+        "chart specification generated",
+        {
+          result: result.result,
+          rows: data,
+        },
+      );
     } catch (error) {
       next(error);
     }
   }
- 
+
   public async getSessionMessages(
     req: AuthRequest,
     res: Response,

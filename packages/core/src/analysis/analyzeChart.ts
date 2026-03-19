@@ -3,10 +3,10 @@ import type { AnalyzeChartInput, AnalyzeChartResult } from "../types/api.js";
 import { resolveConfig } from "../config/defaults.js";
 import { sampleDataset } from "./datasetSampler.js";
 import { formatData } from "../utils/formatData.js";
-import { generateEmbedding } from "../agents/embeddingGeneratorAgent.js";
+import { generateChartSpec } from "../agents/chartSpecGeneratorAgent.js";
 import { validateInput } from "../utils/validation.js";
 import { inspectSchema } from "./schemaInspector.js";
-import { validateEmbeddingConsistency } from "../utils/embeddingValidator.js";
+import { validateChartSpecConsistency } from "../utils/chartSpecValidator.js";
 
 /**
  * Extended input for {@link analyzeChart} — adds optional chat history
@@ -20,7 +20,7 @@ export interface AnalyzeChartOptions extends AnalyzeChartInput {
 /**
  * Analyze a user prompt and dataset to produce a single chart recommendation.
  *
- * Returns the best-fit chart type, field-level embedding (x/y/category/value mappings),
+ * Returns the best-fit chart type, field-level chartSpec (x/y/category/value mappings),
  * and human-readable metadata (title, subtitle, explanation).
  *
  * This is the main entry point for the `@openvizai/core` package.
@@ -42,7 +42,7 @@ export interface AnalyzeChartOptions extends AnalyzeChartInput {
  * });
  *
  * console.log(result.chart.chart_type); // "line"
- * console.log(result.chart.embedding);  // { x: [...], y: [...], ... }
+ * console.log(result.chart.chartSpec);  // { x: [...], y: [...], ... }
  * ```
  *
  * @throws {InvalidInputError} If `prompt` or `data` is missing/invalid.
@@ -67,8 +67,8 @@ export async function analyzeChart(
   // 5. Format sample into tabular structure for LLM
   const sampleData = formatData(sampleUsed);
 
-  // 6. Call LLM to generate chart embedding
-  const result = await generateEmbedding({
+  // 6. Call LLM to generate chartSpec
+  const result = await generateChartSpec({
     prompt: input.prompt,
     sampleData,
     config,
@@ -76,8 +76,8 @@ export async function analyzeChart(
     schema,
   });
 
-  // 7. Post-LLM validation: ensure chart_type matches filled embedding fields
-  const validated = validateEmbeddingConsistency(result);
+  // 7. Post-LLM validation: ensure chart_type matches filled chartSpec fields
+  const validated = validateChartSpecConsistency(result);
 
   // 8. Return result
   return { result: validated, sampleUsed };

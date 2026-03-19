@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { SUPPORTED_CHART_TYPES } from "@openvizai/shared-types";
 import {
-  EmbeddingFieldSchema,
-  EmbeddingFieldTypeSchema,
-  EmbeddingSchema,
-} from "../types/embedding.js";
+  ChartSpecFieldSchema,
+  ChartSpecFieldWithTypeSchema,
+  ChartSpecSchema,
+} from "../types/chartSpec.js";
 
-export { EmbeddingFieldSchema, EmbeddingFieldTypeSchema, EmbeddingSchema };
+export { ChartSpecFieldSchema, ChartSpecFieldWithTypeSchema, ChartSpecSchema };
 
 /**
  * Zod schema that validates the full LLM response for a single chart.
@@ -31,6 +31,6 @@ export const responseFormatterSchema = z.object({
   }),
   chart: z.object({
     chart_type: z.enum(SUPPORTED_CHART_TYPES),
-    embedding: EmbeddingSchema,
+    chartSpec: ChartSpecSchema,
   }),
 });

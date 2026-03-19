@@ -1,21 +1,21 @@
 import Chart from "react-apexcharts";
 import type { ChartComponentProps } from "./types.js";
-import { buildApexBaseOptions } from "../embedding/apexBaseOptions.js";
+import { buildApexBaseOptions } from "../chartSpec/apexBaseOptions.js";
 import {
   buildCategorySeriesLabels,
   buildDatetimePoints,
   buildNumericDataByField,
-} from "../embedding/seriesBuilder.js";
+} from "../chartSpec/seriesBuilder.js";
 
 export default function LineChart({
   data,
-  embedding,
+  chartSpec,
   meta,
   config,
 }: ChartComponentProps) {
-  const xField = embedding.x?.[0]?.field;
-  const isDatetime = embedding.x?.[0]?.unit === "datetime";
-  const yFields = embedding.y ?? [];
+  const xField = chartSpec.x?.[0]?.field;
+  const isDatetime = chartSpec.x?.[0]?.unit === "datetime";
+  const yFields = chartSpec.y ?? [];
 
   if (!xField || yFields.length === 0) {
     return (
@@ -94,7 +94,7 @@ export default function LineChart({
     ...baseOptions,
     chart: {
       ...baseOptions.chart,
-      stacked: embedding.is_stacked,
+      stacked: chartSpec.is_stacked,
       animations: {
         enabled: config?.animations ?? true,
       },
@@ -103,7 +103,7 @@ export default function LineChart({
       ...(categories ? { categories } : {}),
       type: isDatetime ? ("datetime" as const) : ("category" as const),
       title: {
-        text: embedding.x?.[0]?.label ?? undefined,
+        text: chartSpec.x?.[0]?.label ?? undefined,
       },
     },
     yaxis,
@@ -112,19 +112,19 @@ export default function LineChart({
       intersect: false,
     },
     stroke: {
-      curve: (embedding.line_curve ?? "smooth") as
+      curve: (chartSpec.line_curve ?? "smooth") as
         | "smooth"
         | "straight"
         | "stepline",
       width: 2,
     },
     markers: {
-      size: embedding.markers_size ?? 0,
+      size: chartSpec.markers_size ?? 0,
     },
-    ...(embedding.forecast_points
+    ...(chartSpec.forecast_points
       ? {
           forecastDataPoints: {
-            count: embedding.forecast_points,
+            count: chartSpec.forecast_points,
           },
         }
       : {}),

@@ -9,7 +9,9 @@ The OpenVizAI playground is a full-stack demo application included in the reposi
 - **Node.js** >= 20.12.0
 - **npm** >= 9.0.0 (or **pnpm** — the repo includes a pnpm workspace config)
 - **PostgreSQL** — a running PostgreSQL instance (local or hosted)
-- **Gemini API key** (free) — used for chart intelligence
+- **LLM API key** — either of these works for chart intelligence:
+  - **Gemini API key** (free)
+  - **OpenAI API key**
 
 ---
 
@@ -30,12 +32,22 @@ npm install
 
 ---
 
-## 3. Get a Free Gemini API Key
+## 3. Get an LLM API Key (Gemini or OpenAI)
+
+Choose one provider:
+
+### Option A: Gemini (free)
 
 1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
 2. Sign in with your Google account
 3. Click **Create API Key**
 4. Copy the key — you'll need it in the next step
+
+### Option B: OpenAI
+
+1. Go to [OpenAI API Keys](https://platform.openai.com/api-keys)
+2. Create a new API key
+3. Copy the key — you'll need it in the next step
 
 This is completely free and takes under a minute.
 
@@ -52,8 +64,9 @@ cp .env.example .env
 If `.env.example` doesn't exist, create `.env` manually with these values:
 
 ```env
-# LLM Provider — at least one key is required
+# LLM Provider — set at least one key
 GEMINI_API_KEY=your_gemini_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 
 # PostgreSQL connection string
 DATABASE_URL=postgresql://username:password@localhost:5432/openvizai
@@ -68,6 +81,8 @@ NODE_ENV=development
 ```
 
 Replace `username`, `password`, and the database name with your PostgreSQL credentials.
+
+The server will use OpenAI when `OPENAI_API_KEY` is set, otherwise it falls back to Gemini.
 
 ---
 
@@ -115,6 +130,7 @@ Once logged in:
 3. Click **Generate**.
 
 OpenVizAI will:
+
 - Sample your dataset
 - Call the LLM to determine the best chart configuration
 - Render an interactive ApexChart
@@ -125,10 +141,10 @@ Try different prompts on the same dataset to see how the chart type changes base
 
 ## Troubleshooting
 
-| Issue | Solution |
-|---|---|
-| `DATABASE_URL` connection refused | Ensure PostgreSQL is running and the connection string is correct |
-| `GEMINI_API_KEY` errors | Verify the key at [Google AI Studio](https://aistudio.google.com/apikey) |
-| Port conflicts | Change `PORT` in `.env` or the Vite port in `apps/web/vite.config.ts` |
-| Prisma schema drift | Run `npx prisma db push` again to sync |
-| Login not working | Any email format works — no verification required |
+| Issue                             | Solution                                                                                                                |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL` connection refused | Ensure PostgreSQL is running and the connection string is correct                                                       |
+| LLM API key errors                | Verify `OPENAI_API_KEY` (OpenAI dashboard) or `GEMINI_API_KEY` ([Google AI Studio](https://aistudio.google.com/apikey)) |
+| Port conflicts                    | Change `PORT` in `.env` or the Vite port in `apps/web/vite.config.ts`                                                   |
+| Prisma schema drift               | Run `npx prisma db push` again to sync                                                                                  |
+| Login not working                 | Any email format works — no verification required                                                                       |
