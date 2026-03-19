@@ -114,20 +114,38 @@ Example LLM output:
 
 This metadata is all the rendering layer needs. The deterministic runtime takes this plus the original dataset and produces the final chart — no matter if the dataset has 100 or 500,000 rows.
 
-## Open Standard
+## ChartSpec — The Universal Chart Contract
 
-OpenVizAI uses `chartSpec` as an open, versioned contract.
+Every chart library speaks a different language. ApexCharts wants one config shape, 
+Recharts wants another, Chart.js wants a third. This makes AI-generated charts 
+fragile — if you swap your rendering library, everything breaks.
 
-- Current version: `openvizai/spec/v1`
-- Per chart example: [docs](docs/README.md)
+chartSpec solves this by sitting between the AI and the renderer.
 
-- "Other tools can output chartSpec-compatible JSON and automatically work with every OpenVizAI adapter."
+The LLM outputs a `chartSpec` — a small, library-agnostic JSON object that describes 
+*what* to visualize (chart type, which fields go where, labels, grouping). 
+A renderer adapter then translates that into whatever your chosen chart library expects.
+```json
+{
+  "chart_type": "bar",
+  "chartSpec": {
+    "x": [{ "field": "month", "label": "Month" }],
+    "y": [{ "field": "revenue", "label": "Revenue" }]
+  },
+  "meta": { "title": "Monthly Revenue", "subtitle": "Jan – Dec 2025" }
+}
+```
 
-Requirement for custom generators:
+chartSpec is an open, versioned standard — `openvizai/spec/v1`. You can:
 
-- If you build your own chartSpec generation logic from sample data, your output must follow `openvizai/spec/v1` to ensure compatibility with OpenVizAI adapters .
+- Use `@openvizai/core` to generate it automatically from a prompt + dataset
+- Call any LLM yourself and produce chartSpec-compatible JSON directly
+- Write it by hand for static, pre-configured charts
 
----
+Any tool that emits `openvizai/spec/v1`-compatible JSON works with every 
+OpenVizAI adapter. See the [chartSpec docs](docs/README.md) for the full schema 
+and per-chart examples.
+
 
 ## Token Cost
 
